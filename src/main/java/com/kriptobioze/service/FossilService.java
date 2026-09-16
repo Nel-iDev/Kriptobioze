@@ -1,9 +1,10 @@
 package com.kriptobioze.service;
 
+import com.kriptobioze.dto.EstratigrafiaDTO;
+import com.kriptobioze.model.Camada;
 import com.kriptobioze.model.Fossil;
-import com.kriptobioze.model.GeologicalLayer;
+import com.kriptobioze.repository.CamadaRepository;
 import com.kriptobioze.repository.FossilRepository;
-import com.kriptobioze.repository.GeologicalLayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ public class FossilService {
     private FossilRepository fossilRepository;
 
     @Autowired
-    private GeologicalLayerRepository geologicalLayerRepository;
+    private CamadaRepository camadaRepository;
 
     public List<Fossil> getAllFossils() {
         return fossilRepository.findAll();
@@ -27,8 +28,12 @@ public class FossilService {
             .orElseThrow(() -> new IllegalArgumentException("Fóssil não encontrado com id: " + id));
     }
 
-    public List<Fossil> getFossilsByLayer(Long layerId) {
-        return fossilRepository.findByLayerId(layerId);
+    public List<Fossil> getFossilsByLayer(Long camadaId) {
+        return fossilRepository.findByCamadaId(camadaId);
+    }
+
+    public List<EstratigrafiaDTO> getEstratigrafia() {
+        return fossilRepository.findAllEstratigrafiaOrderByProfundidadeDesc();
     }
 
     public Fossil createFossil(Fossil fossil) {
@@ -37,12 +42,12 @@ public class FossilService {
 
     public Fossil updateFossil(Long id, Fossil fossilDetails) {
         Fossil fossil = getFossilById(id);
-        fossil.setName(fossilDetails.getName());
-        fossil.setTaxonomy(fossilDetails.getTaxonomy());
-        fossil.setAltitudeMeters(fossilDetails.getAltitudeMeters());
-        fossil.setLayer(fossilDetails.getLayer());
-        fossil.setDiscoveryLocation(fossilDetails.getDiscoveryLocation());
-        fossil.setDescription(fossilDetails.getDescription());
+        fossil.setNomeCientifico(fossilDetails.getNomeCientifico());
+        fossil.setTaxonomia(fossilDetails.getTaxonomia());
+        fossil.setIdadeEstimada(fossilDetails.getIdadeEstimada());
+        fossil.setCamada(fossilDetails.getCamada());
+        fossil.setLocalidadeDescoberta(fossilDetails.getLocalidadeDescoberta());
+        fossil.setDescricao(fossilDetails.getDescricao());
         return fossilRepository.save(fossil);
     }
 
@@ -50,30 +55,30 @@ public class FossilService {
         fossilRepository.deleteById(id);
     }
 
-    public List<GeologicalLayer> getAllLayers() {
-        return geologicalLayerRepository.findAll();
+    public List<Camada> getAllLayers() {
+        return camadaRepository.findAll();
     }
 
-    public GeologicalLayer getLayerById(Long id) {
-        return geologicalLayerRepository.findById(id)
+    public Camada getLayerById(Long id) {
+        return camadaRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Camada não encontrada com id: " + id));
     }
 
-    public GeologicalLayer createLayer(GeologicalLayer layer) {
-        return geologicalLayerRepository.save(layer);
+    public Camada createLayer(Camada layer) {
+        return camadaRepository.save(layer);
     }
 
-    public GeologicalLayer updateLayer(Long id, GeologicalLayer layerDetails) {
-        GeologicalLayer layer = getLayerById(id);
-        layer.setName(layerDetails.getName());
-        layer.setDepthMeters(layerDetails.getDepthMeters());
-        layer.setRockType(layerDetails.getRockType());
-        layer.setEstimatedAgeMillionsYears(layerDetails.getEstimatedAgeMillionsYears());
-        layer.setDescription(layerDetails.getDescription());
-        return geologicalLayerRepository.save(layer);
+    public Camada updateLayer(Long id, Camada layerDetails) {
+        Camada layer = getLayerById(id);
+        layer.setNomeEra(layerDetails.getNomeEra());
+        layer.setProfundidadeMedia(layerDetails.getProfundidadeMedia());
+        layer.setTipoRocha(layerDetails.getTipoRocha());
+        layer.setIdadeEstimadaMa(layerDetails.getIdadeEstimadaMa());
+        layer.setDescricao(layerDetails.getDescricao());
+        return camadaRepository.save(layer);
     }
 
     public void deleteLayer(Long id) {
-        geologicalLayerRepository.deleteById(id);
+        camadaRepository.deleteById(id);
     }
 }

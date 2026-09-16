@@ -5,59 +5,62 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "fossils")
+@Table(name = "fossil")
 public class Fossil {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @NotBlank
-    private String name;
-    
+    @Column(name = "nome_cientifico")
+    private String nomeCientifico;
+
     @NotBlank
-    private String taxonomy;
-    
+    private String taxonomia;
+
     @NotNull
-    private Double altitudeMeters;
-    
+    @Column(name = "idade_estimada")
+    private Double idadeEstimada;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "layer_id", nullable = false)
-    private GeologicalLayer layer;
-    
-    private String discoveryLocation;
-    
-    private String description;
+    @JoinColumn(name = "fk_camada", nullable = false)
+    private Camada camada;
+
+    @Column(name = "localidade_descoberta")
+    private String localidadeDescoberta;
+
+    private String descricao;
 
     public Fossil() {}
 
-    public Fossil(String name, String taxonomy, Double altitudeMeters, GeologicalLayer layer, String discoveryLocation, String description) {
-        this.name = name;
-        this.taxonomy = taxonomy;
-        this.altitudeMeters = altitudeMeters;
-        this.layer = layer;
-        this.discoveryLocation = discoveryLocation;
-        this.description = description;
+    public Fossil(String nomeCientifico, String taxonomia, Double idadeEstimada, Camada camada, String localidadeDescoberta, String descricao) {
+        this.nomeCientifico = nomeCientifico;
+        this.taxonomia = taxonomia;
+        this.idadeEstimada = idadeEstimada;
+        this.camada = camada;
+        this.localidadeDescoberta = localidadeDescoberta;
+        this.descricao = descricao;
     }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getNomeCientifico() { return nomeCientifico; }
+    public void setNomeCientifico(String nomeCientifico) { this.nomeCientifico = nomeCientifico; }
 
-    public String getTaxonomy() { return taxonomy; }
-    public void setTaxonomy(String taxonomy) { this.taxonomy = taxonomy; }
+    public String getTaxonomia() { return taxonomia; }
+    public void setTaxonomia(String taxonomia) { this.taxonomia = taxonomia; }
 
-    public Double getAltitudeMeters() { return altitudeMeters; }
-    public void setAltitudeMeters(Double altitudeMeters) { this.altitudeMeters = altitudeMeters; }
+    public Double getIdadeEstimada() { return idadeEstimada; }
+    public void setIdadeEstimada(Double idadeEstimada) { this.idadeEstimada = idadeEstimada; }
 
-    public GeologicalLayer getLayer() { return layer; }
-    public void setLayer(GeologicalLayer layer) { this.layer = layer; }
+    public Camada getCamada() { return camada; }
+    public void setCamada(Camada camada) { this.camada = camada; }
 
-    public String getDiscoveryLocation() { return discoveryLocation; }
-    public void setDiscoveryLocation(String discoveryLocation) { this.discoveryLocation = discoveryLocation; }
+    public String getLocalidadeDescoberta() { return localidadeDescoberta; }
+    public void setLocalidadeDescoberta(String localidadeDescoberta) { this.localidadeDescoberta = localidadeDescoberta; }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 }
