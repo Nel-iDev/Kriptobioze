@@ -288,11 +288,61 @@
         O objeto global <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">window.KB</code> também expõe
         <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">calculateDecay</code>,
         <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">calculateDarwin</code>,
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getFossils</code> e
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getLayers</code>.
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getFossils</code>,
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getLayers</code> e
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getEstratigrafia</code>
+        (este último alimenta a tabela de estratigrafia abaixo via
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">GET /api/fossils/estratigrafia</code>).
       </p>
     </div>
   </main>
+
+  <!-- ============================================================
+       ESTRATIGRAFIA — Tabela de fósseis por camada (consultas DQL)
+       ============================================================ -->
+  <section id="estratigrafia" class="mx-auto max-w-7xl scroll-mt-20 px-4 py-10 sm:py-14">
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="font-display text-sm font-bold uppercase tracking-widest text-kripta-orange">Modelagem · Banco de Dados</p>
+        <h2 class="font-display mt-1 text-3xl font-extrabold text-kripta-navy sm:text-4xl">
+          Estratigrafia de Fósseis e Camadas
+        </h2>
+        <p class="mt-2 max-w-3xl text-sm text-stone-600 sm:text-base">
+          Lei da superposição, proposta por Darwin: <strong>os fósseis de camadas mais profundas
+          são, em tese, mais antigos</strong>. A tabela abaixo é o resultado de um
+          <code class="rounded bg-orange-100 px-1.5 py-0.5 font-mono text-xs text-kripta-orange">INNER JOIN</code>
+          entre <code class="rounded bg-orange-100 px-1.5 py-0.5 font-mono text-xs text-kripta-orange">CAMADA</code>
+          e <code class="rounded bg-orange-100 px-1.5 py-0.5 font-mono text-xs text-kripta-orange">FOSSIL</code>
+          ordenado por
+          <code class="rounded bg-orange-100 px-1.5 py-0.5 font-mono text-xs text-kripta-orange">profundidade_media DESC</code>
+          — da camada mais profunda (mais antiga, no topo) para a superfície (mais recente).
+        </p>
+      </div>
+      <span id="estratigrafiaNote" class="max-w-sm rounded-2xl bg-white px-4 py-2 text-xs font-bold text-stone-600 shadow-sm">Carregando…</span>
+    </div>
+
+    <div class="overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-lg shadow-orange-100/60">
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[720px] text-left text-sm">
+          <thead class="bg-kripta-navy text-white">
+            <tr>
+              <th class="px-5 py-3.5 font-bold">Profundidade média</th>
+              <th class="px-5 py-3.5 font-bold">Era</th>
+              <th class="px-5 py-3.5 font-bold">Tipo de rocha</th>
+              <th class="px-5 py-3.5 font-bold">Fóssil (nome científico)</th>
+              <th class="px-5 py-3.5 font-bold">Taxonomia</th>
+              <th class="px-5 py-3.5 font-bold">Idade estimada</th>
+            </tr>
+          </thead>
+          <tbody id="estratigrafiaBody"></tbody>
+        </table>
+      </div>
+      <p class="border-t border-orange-100 bg-orange-50 px-5 py-3 text-xs text-stone-500">
+        ⬆ Mais profundo = mais antigo · ⬇ Mais raso = mais recente. Dataset do DataSeeder
+        (<code class="font-mono">database/02_dados_iniciais.sql</code>).
+      </p>
+    </div>
+  </section>
 
   <!-- ============================================================
        FOOTER (laranja, texto branco)

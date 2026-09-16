@@ -16,7 +16,8 @@
         calculate: "/api/radioactive-decay/calculate",
         darwin: "/api/darwin/calculate",
         fossils: "/api/fossils",
-        layers: "/api/layers"
+        layers: "/api/layers",
+        estratigrafia: "/api/fossils/estratigrafia"
       }
     },
 
@@ -58,6 +59,14 @@
     },
     getLayers() {
       return KB._request(KB.config.apiBase + KB.config.endpoints.layers);
+    },
+
+    /* GET /api/fossils/estratigrafia
+       INNER JOIN fossil + camada ORDER BY profundidade_media DESC — mesmo DQL
+       do script database/03_consultas.sql. A ordem já vem da mais profunda
+       (mais antiga) para a superfície (mais recente). */
+    getEstratigrafia() {
+      return KB._request(KB.config.apiBase + KB.config.endpoints.estratigrafia);
     }
   });
 
@@ -114,6 +123,20 @@
   /* ---------- estado ---------- */
   let isotopes = FALLBACK_ISOTOPES.slice();
   let apiMode = "local";
+
+  /* Dados de estratigrafia (fallback local = mesmos valores do DataSeeder /
+     do arquivo database/02_dados_iniciais.sql). A ordem acompanha o DQL:
+     profundidade_media DESC (mais profundo -> mais antigo, primeiro). */
+  const FALLBACK_ESTRATIGRAFIA = [
+    { fossilId: 5, nomeCientifico: "Stromatólito de cianobactérias", taxonomia: "Cyanobacteria (microbialito fóssil)", idadeEstimadaMa: 3500, nomeEra: "Arqueano", profundidadeMedia: 10000, tipoRocha: "Metamórfica" },
+    { fossilId: 4, nomeCientifico: "Dickinsonia costata", taxonomia: "Proarticulata · Dickinsoniidae", idadeEstimadaMa: 560, nomeEra: "Proterozóico", profundidadeMedia: 5000, tipoRocha: "Metamórfica" },
+    { fossilId: 3, nomeCientifico: "Paradoxides sp.", taxonomia: "Trilobita · Paradoxididae", idadeEstimadaMa: 505, nomeEra: "Paleozóico", profundidadeMedia: 1500, tipoRocha: "Sedimentar" },
+    { fossilId: 1, nomeCientifico: "Tyrannosaurus rex", taxonomia: "Dinosauria · Theropoda", idadeEstimadaMa: 66, nomeEra: "Mesozóico", profundidadeMedia: 500, tipoRocha: "Sedimentar" },
+    { fossilId: 2, nomeCientifico: "Triceratops horridus", taxonomia: "Dinosauria · Ceratopsidae", idadeEstimadaMa: 68, nomeEra: "Mesozóico", profundidadeMedia: 500, tipoRocha: "Sedimentar" },
+    { fossilId: 0, nomeCientifico: "Mammuthus primigenius", taxonomia: "Mammalia · Proboscidea", idadeEstimadaMa: 0.04, nomeEra: "Cenozóico", profundidadeMedia: 0, tipoRocha: "Sedimentar" }
+  ];
+
+  let estratigrafia = FALLBACK_ESTRATIGRAFIA.slice();
 
   const state = {
     isotopeSymbol: "C-14",
@@ -320,6 +343,40 @@
     renderReadouts();
   }
 
+  /* ---------- tabela de estratigrafia (DQL: INNER JOIN + ORDER BY profundidade DESC) ---------- */
+  function fmtEraAge(ma) {
+    return ma < 1
+      ? fmtNum(Math.round(ma * 1e6)) + " anos"
+      : fmtNum(ma) + " Ma";
+  }
+
+  function renderEstratigrafia() {
+    const body = $("#estratigrafiaBody");
+    const note = $("#estratigrafiaNote");
+    if (!body) return;
+
+    body.innerHTML = "";
+    estratigrafia.forEach((f) => {
+      const tr = document.createElement("tr");
+      tr.className = "border-b border-orange-100 last:border-0 hover:bg-amber-50";
+      tr.innerHTML =
+        '<td class="px-4 py-3"><span class="inline-flex min-w-[3.5rem] items-center justify-center rounded-lg bg-kripta-orange px-2 py-1 text-xs font-bold text-white">' +
+        fmtNum(f.profundidadeMedia) + " m</span></td>" +
+        '<td class="px-4 py-3 font-bold text-kripta-navy">' + f.nomeEra + "</td>" +
+        '<td class="px-4 py-3 text-stone-600">' + f.tipoRocha + "</td>" +
+        '<td class="px-4 py-3 font-bold italic text-stone-800">' + f.nomeCientifico + "</td>" +
+        '<td class="px-4 py-3 text-stone-600">' + f.taxonomia + "</td>" +
+        '<td class="px-4 py-3 font-bold text-stone-800">' + fmtEraAge(f.idadeEstimadaMa) + "</td>";
+      body.appendChild(tr);
+    });
+
+    if (note) {
+      note.textContent = apiMode === "api"
+        ? "Consultado via GET /api/fossils/estratigrafia — mesma consulta DQL executada no PostgreSQL."
+        : "Modo local — mostra o resultado esperado da consulta DQL (database/03_consultas.sql), com o backend ligado a tabela vem da API.";
+    }
+  }
+
   /* ---------- controles: simular / resetar ---------- */
   function startSim() {
     if (state.running) return;
@@ -411,6 +468,7 @@
      ============================================================ */
   async function boot() {
     renderIsotopeGroup();
+    renderEstratigrafia();
     renderAll();
     updateStatus();
 
@@ -434,7 +492,20 @@
     } catch (_err) {
       apiMode = "local";
     }
+
+    try {
+      const rows = await KB.getEstratigrafia();
+      if (Array.isArray(rows) && rows.length) {
+        estratigrafia = rows;
+        apiMode = "api";
+        renderEstratigrafia();
+      }
+    } catch (_err) {
+      /* sem API: mantém o fallback local */
+    }
+
     updateStatus();
+    renderEstratigrafia();
   }
 
   boot();

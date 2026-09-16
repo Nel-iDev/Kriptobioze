@@ -1,7 +1,8 @@
 package com.kriptobioze.controller;
 
+import com.kriptobioze.dto.EstratigrafiaDTO;
+import com.kriptobioze.model.Camada;
 import com.kriptobioze.model.Fossil;
-import com.kriptobioze.model.GeologicalLayer;
 import com.kriptobioze.service.FossilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,11 @@ public class FossilController {
         return ResponseEntity.ok(fossilService.getFossilsByLayer(layerId));
     }
 
+    @GetMapping("/fossils/estratigrafia")
+    public ResponseEntity<List<EstratigrafiaDTO>> getEstratigrafia() {
+        return ResponseEntity.ok(fossilService.getEstratigrafia());
+    }
+
     @PostMapping("/fossils")
     public ResponseEntity<Fossil> createFossil(@RequestBody Fossil fossil) {
         return ResponseEntity.ok(fossilService.createFossil(fossil));
@@ -49,22 +55,22 @@ public class FossilController {
     }
 
     @GetMapping("/layers")
-    public ResponseEntity<List<GeologicalLayer>> getAllLayers() {
+    public ResponseEntity<List<Camada>> getAllLayers() {
         return ResponseEntity.ok(fossilService.getAllLayers());
     }
 
     @GetMapping("/layers/{id}")
-    public ResponseEntity<GeologicalLayer> getLayerById(@PathVariable Long id) {
+    public ResponseEntity<Camada> getLayerById(@PathVariable Long id) {
         return ResponseEntity.ok(fossilService.getLayerById(id));
     }
 
     @PostMapping("/layers")
-    public ResponseEntity<GeologicalLayer> createLayer(@RequestBody GeologicalLayer layer) {
+    public ResponseEntity<Camada> createLayer(@RequestBody Camada layer) {
         return ResponseEntity.ok(fossilService.createLayer(layer));
     }
 
     @PutMapping("/layers/{id}")
-    public ResponseEntity<GeologicalLayer> updateLayer(@PathVariable Long id, @RequestBody GeologicalLayer layer) {
+    public ResponseEntity<Camada> updateLayer(@PathVariable Long id, @RequestBody Camada layer) {
         return ResponseEntity.ok(fossilService.updateLayer(id, layer));
     }
 

@@ -1,12 +1,19 @@
 package com.kriptobioze.config;
 
-import com.kriptobioze.model.GeologicalLayer;
+import com.kriptobioze.model.Camada;
+import com.kriptobioze.model.Fossil;
 import com.kriptobioze.model.Isotope;
-import com.kriptobioze.repository.GeologicalLayerRepository;
+import com.kriptobioze.repository.CamadaRepository;
+import com.kriptobioze.repository.FossilRepository;
 import com.kriptobioze.repository.IsotopeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -15,15 +22,21 @@ public class DataSeeder implements CommandLineRunner {
     private IsotopeRepository isotopeRepository;
 
     @Autowired
-    private GeologicalLayerRepository geologicalLayerRepository;
+    private CamadaRepository camadaRepository;
+
+    @Autowired
+    private FossilRepository fossilRepository;
 
     @Override
     public void run(String... args) {
         if (isotopeRepository.count() == 0) {
             seedIsotopes();
         }
-        if (geologicalLayerRepository.count() == 0) {
-            seedLayers();
+        if (camadaRepository.count() == 0) {
+            seedCamadas();
+        }
+        if (fossilRepository.count() == 0) {
+            seedFossils();
         }
     }
 
@@ -60,26 +73,68 @@ public class DataSeeder implements CommandLineRunner {
         ));
     }
 
-    private void seedLayers() {
-        geologicalLayerRepository.save(new GeologicalLayer(
+    private void seedCamadas() {
+        camadaRepository.save(new Camada(
             "Cenozóico", 0.0, "Sedimentar", 66,
             "Era mais recente - inclui período quaternário e terciário"
         ));
-        geologicalLayerRepository.save(new GeologicalLayer(
+        camadaRepository.save(new Camada(
             "Mesozóico", 500.0, "Sedimentar", 252,
             "Era dos dinossauros - triássico, jurássico e cretáceo"
         ));
-        geologicalLayerRepository.save(new GeologicalLayer(
+        camadaRepository.save(new Camada(
             "Paleozóico", 1500.0, "Sedimentar", 541,
             "Era da vida antiga - cambriano até permiano"
         ));
-        geologicalLayerRepository.save(new GeologicalLayer(
+        camadaRepository.save(new Camada(
             "Proterozóico", 5000.0, "Metamórfica", 2500,
-            "Era da vida primitiva - beginço da vida complexa"
+            "Era da vida primitiva - começo da vida complexa"
         ));
-        geologicalLayerRepository.save(new GeologicalLayer(
+        camadaRepository.save(new Camada(
             "Arqueano", 10000.0, "Metamórfica", 4000,
             "Era mais antiga - formação da crosta terrestre"
+        ));
+    }
+
+    private void seedFossils() {
+        Map<String, Camada> camadasPorEra = camadaRepository.findAll().stream()
+            .collect(Collectors.toMap(Camada::getNomeEra, Function.identity()));
+
+        fossilRepository.save(new Fossil(
+            "Mammuthus primigenius", "Mammalia · Proboscidea", 0.04,
+            camadasPorEra.get("Cenozóico"),
+            "Sibéria, Norte da Ásia",
+            "Mamute-lanudo do fim do Quaternário"
+        ));
+        fossilRepository.save(new Fossil(
+            "Tyrannosaurus rex", "Dinosauria · Theropoda", 66.0,
+            camadasPorEra.get("Mesozóico"),
+            "Formação Hell Creek, EUA",
+            "Cretáceo Superior, era dos dinossauros"
+        ));
+        fossilRepository.save(new Fossil(
+            "Triceratops horridus", "Dinosauria · Ceratopsidae", 68.0,
+            camadasPorEra.get("Mesozóico"),
+            "Formação Lance, EUA",
+            "Cretáceo Superior, contemporâneo do T. rex"
+        ));
+        fossilRepository.save(new Fossil(
+            "Paradoxides sp.", "Trilobita · Paradoxididae", 505.0,
+            camadasPorEra.get("Paleozóico"),
+            "Folhelhos do Cambriano, Europa",
+            "Trilobite típico da Explosão Cambriana"
+        ));
+        fossilRepository.save(new Fossil(
+            "Dickinsonia costata", "Proarticulata · Dickinsoniidae", 560.0,
+            camadasPorEra.get("Proterozóico"),
+            "Bioma de Ediacara, Austrália",
+            "Animal de corpo mole do Ediacarano"
+        ));
+        fossilRepository.save(new Fossil(
+            "Stromatólito de cianobactérias", "Cyanobacteria (microbialito fóssil)", 3500.0,
+            camadasPorEra.get("Arqueano"),
+            "Pilbara Craton, Austrália",
+            "Vestígios de vida fotossintética do Arqueano"
         ));
     }
 }
