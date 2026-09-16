@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kriptobioze — Do Tempo Geológico ao Algoritmo</title>
+  <link rel="icon" type="image/png" href="assets/dino-laranja.png">
+  <meta name="description" content="Projeto interdisciplinar Kriptobioze: simulação de decaimento radioativo para datação de fósseis — produzido por Kripta.">
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS (Play CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            kripta: {
+              orange: "#F97316",
+              amber: "#FBBF24",
+              aqua: "#2DD4BF",
+              lilac: "#C084FC",
+              navy: "#17233B"
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', "sans-serif"],
+            body: ["Nunito", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- CSS custom (animações da savana + detalhes de marca) -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="font-body bg-amber-50 text-stone-800 antialiased">
+
+  <!-- ============================================================
+       NAVBAR (laranja) — logo Kripta à esquerda, menu à direita
+       ============================================================ -->
+  <nav class="fixed inset-x-0 top-0 z-40 h-16 bg-kripta-orange shadow-lg">
+    <div class="flex h-full w-full items-center justify-between px-2 sm:px-3">
+      <a href="#hero" class="flex items-center gap-2" aria-label="Kripta — início">
+        <img src="assets/KriptaBranco.png" alt="Logo Kripta" class="h-9 w-auto sm:h-10">
+      </a>
+      <button
+        id="btnMenu"
+        type="button"
+        aria-label="Abrir menu lateral"
+        aria-expanded="false"
+        class="rounded-lg p-2 text-white transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+      >
+        <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO — "gif" de savana pré-histórica (CSS animado), laranja
+       ============================================================ -->
+  <header id="hero" class="relative overflow-hidden bg-kripta-orange pt-16">
+    <div class="savana-sky relative h-[46vh] min-h-[340px] w-full md:h-[52vh]">
+
+      <!-- sol -->
+      <div class="kb-sun absolute right-[6%] top-[9%] h-20 w-20 rounded-full md:h-28 md:w-28"></div>
+
+      <!-- nuvens -->
+      <div class="kb-cloud" style="top: 14%; --dur: 80s; --delay: -20s;"></div>
+      <div class="kb-cloud" style="top: 22%; --dur: 110s; --delay: -64s; opacity: .7;"></div>
+      <div class="kb-cloud" style="top: 8%; --dur: 140s; --delay: -102s; opacity: .5;"></div>
+
+      <!-- colinas em camadas (profundidade âmbar -> laranja escuro) -->
+      <div class="hill left-[-5%] bottom-[16%] h-[34%] w-[70%] bg-orange-900/25"></div>
+      <div class="hill right-[-8%] bottom-[13%] h-[40%] w-[75%] bg-orange-950/35"></div>
+      <div class="hill left-[-12%] bottom-[8%] h-[42%] w-[110%] bg-amber-600/45"></div>
+
+      <!-- chão de terra -->
+      <div class="absolute inset-x-0 bottom-0 h-[18%] bg-gradient-to-b from-amber-800 to-orange-950"></div>
+
+      <!-- árvores distantes (imagem "Árvore menor", atrás dos dinos) -->
+      <img src="assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--far" style="left:6%; bottom:14%; height:88px;">
+      <img src="assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--far" style="left:24%; bottom:12%; height:64px;">
+      <img src="assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--far" style="left:64%; bottom:14%; height:76px;">
+      <img src="assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--far" style="left:90%; bottom:13%; height:82px;">
+
+      <!-- pterodáctilo planando -->
+      <div class="kb-ptero" style="top: 16%; --dur: 50s;">
+        <img src="assets/dino-voador-laranja.png" alt="" aria-hidden="true" class="kb-flap h-8 w-auto sm:h-10">
+      </div>
+
+      <!-- dinossauros andando (silhuetas brancas, pequenininhos) -->
+      <div class="walker walker--back dino-walk-right" style="bottom: 14%; --dur: 24s; --delay: -6s;">
+        <div class="dino-shadow"></div>
+        <img src="assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-6 w-auto">
+      </div>
+      <div class="walker walker--front dino-walk-left" style="bottom: 12%; --dur: 36s; --delay: -18s;">
+        <div class="dino-shadow"></div>
+        <img src="assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-9 w-auto">
+      </div>
+      <div class="walker walker--back dino-walk-right" style="bottom: 16%; --dur: 19s; --delay: -4s;">
+        <div class="dino-shadow"></div>
+        <img src="assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-5 w-auto">
+      </div>
+      <div class="walker walker--front dino-walk-left" style="bottom: 13%; --dur: 44s; --delay: -29s;">
+        <div class="dino-shadow"></div>
+        <img src="assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-7 w-auto">
+      </div>
+      <div class="walker walker--back dino-walk-right" style="bottom: 15%; --dur: 30s; --delay: -13s;">
+        <div class="dino-shadow"></div>
+        <img src="assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-5 w-auto">
+      </div>
+      <div class="walker walker--front dino-walk-left" style="bottom: 11%; --dur: 54s; --delay: -41s;">
+        <div class="dino-shadow"></div>
+        <img src="assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-10 w-auto">
+      </div>
+
+      <!-- árvores próximas (imagem "Árvore menor", frente — dinos passam atrás) -->
+      <img src="assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--near" style="left:5%; bottom:2%; height:150px;">
+      <img src="assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--near" style="left:88%; bottom:3%; height:110px;">
+
+      <!-- vinheta para leitura do título -->
+      <div class="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(ellipse_at_center,rgba(30,20,5,0)_35%,rgba(30,20,5,0.28)_100%)]"></div>
+
+      <!-- TEXTO PRINCIPAL -->
+      <div class="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center px-4 text-center">
+        <div class="kb-title flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
+          <img src="assets/DinoBranco.png" alt="" aria-hidden="true" class="h-14 w-auto drop-shadow-lg sm:h-20">
+          <h1 class="font-display kb-text-shadow text-5xl font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">
+            Kriptobioze
+          </h1>
+        </div>
+        <p class="kb-text-shadow mt-4 flex items-center gap-2 text-sm font-bold text-white/95 sm:text-lg">
+          Feito por
+          <img src="assets/KriptaBranco.png" alt="Logo Kripta" class="h-6 w-auto sm:h-8">
+          <span>Kripta</span>
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       DASHBOARD — Simulador de Decaimento Radioativo (Proposta B)
+       ============================================================ -->
+  <main id="dashboard" class="mx-auto max-w-7xl scroll-mt-20 px-4 py-10 sm:py-14">
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="font-display text-sm font-bold uppercase tracking-widest text-kripta-orange">Dashboard · Biologia &amp; Programação</p>
+        <h2 class="font-display mt-1 text-3xl font-extrabold text-kripta-navy sm:text-4xl">
+          Simulador de Decaimento Radioativo
+        </h2>
+        <p class="mt-2 max-w-2xl text-stone-600">
+          Simule a perda de massa ativa (meia-vida) ao longo do tempo e veja,
+          em tempo real, a idade estimada do fóssil.
+        </p>
+      </div>
+      <span id="apiStatus" class="inline-flex items-center gap-1.5 rounded-full bg-kripta-amber/20 px-3 py-1 text-xs font-bold text-stone-600">
+        Conectando…
+      </span>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+
+      <!-- COLUNA 1 — controles -->
+      <section class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+        <h3 class="font-display text-lg font-bold text-kripta-navy">1 · Selecione o isótopo de datação</h3>
+        <p class="mt-1 text-xs text-stone-500">
+          Carbono-14 para até 50 mil anos; Urânio-235 ou Potássio-40 para milhões/bilhões de anos. O banco
+          traz ainda U-238, Rb-87 e Sm-147 (meias-vidas astronômicas) para rochas, meteoritos.
+        </p>
+
+        <div id="isotopeGroup" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3" role="radiogroup" aria-label="Isótopo de datação"></div>
+
+        <h3 class="font-display mt-8 text-lg font-bold text-kripta-navy">2 · Massa ativa restante na rocha</h3>
+        <div class="mt-4">
+          <div class="flex items-center justify-between text-sm">
+            <span class="font-semibold text-stone-700" id="isotopeName">Carbono-14 (C-14)</span>
+            <span class="font-bold text-kripta-orange" id="pctOut">50,0% do isótopo na rocha</span>
+          </div>
+          <input
+            id="rangePct"
+            type="range"
+            min="0.1"
+            max="100"
+            step="0.1"
+            value="50"
+            class="mt-3 w-full cursor-pointer"
+            aria-label="Massa ativa restante, em porcentagem"
+          >
+        </div>
+
+        <!-- leituras -->
+        <div class="mt-6 grid grid-cols-3 gap-3 text-center">
+          <div class="rounded-2xl bg-kripta-orange p-4 text-white">
+            <p class="text-[11px] font-bold uppercase tracking-wide opacity-80">Idade estimada do fóssil</p>
+            <p id="ageOut" class="font-display mt-1 text-lg font-extrabold leading-tight sm:text-xl">5.730 anos</p>
+            <p id="eraOut" class="mt-2 inline-block max-w-full truncate rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"
+              title="Cenozóico">Cenozóico</p>
+          </div>
+          <div class="rounded-2xl bg-amber-100 p-4">
+            <p class="text-[11px] font-bold uppercase tracking-wide text-stone-500">Meias-vidas decorridas</p>
+            <p id="hlOut" class="font-display mt-1 text-lg font-extrabold text-kripta-navy sm:text-xl">0,00</p>
+          </div>
+          <div class="rounded-2xl bg-stone-100 p-4">
+            <p class="text-[11px] font-bold uppercase tracking-wide text-stone-500">Tempo simulado (anos)</p>
+            <p id="timeOut" class="font-display mt-1 text-lg font-extrabold text-kripta-navy sm:text-xl">0 anos</p>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <button
+            id="btnPlay"
+            type="button"
+            class="rounded-xl bg-kripta-navy px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-black/85 active:scale-95"
+          >
+            ▶ Simular decaimento
+          </button>
+          <button
+            id="btnReset"
+            type="button"
+            class="rounded-xl border border-stone-300 bg-white px-5 py-2.5 text-sm font-bold text-stone-600 transition hover:bg-stone-100 active:scale-95"
+          >
+            ↺ Resetar
+          </button>
+        </div>
+      </section>
+
+      <!-- COLUNA 2 — visualização -->
+      <section class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+        <h3 class="font-display text-lg font-bold text-kripta-navy">3 · Visualização do decaimento</h3>
+
+        <p class="mt-1 text-xs text-stone-500">Perda de massa ativa (meia-vida) em barra, átomos e curva exponencial.</p>
+
+        <!-- barra de massa -->
+        <div class="mt-5">
+          <div class="flex justify-between text-[11px] font-bold uppercase tracking-wide text-stone-500">
+            <span>100%</span><span id="isotopeBarLabel">C-14</span><span>0%</span>
+          </div>
+          <div class="mt-1 h-4 w-full overflow-hidden rounded-full bg-stone-200">
+            <div id="massBar" class="h-full rounded-full bg-gradient-to-r from-kripta-amber to-kripta-orange transition-all duration-200" style="width: 50%;"></div>
+          </div>
+        </div>
+
+        <!-- grid de átomos -->
+        <div class="mt-6">
+          <p class="mb-2 flex items-center gap-2 text-sm font-semibold text-stone-700">
+            <span class="inline-block h-3 w-3 rounded-sm bg-gradient-to-br from-kripta-amber to-kripta-orange ring-1 ring-kripta-orange/50"></span>
+            Isótopo ativo
+            <span class="ml-3 inline-block h-3 w-3 rounded-sm border border-dashed border-stone-400/60"></span>
+            Já decaído (produto-filha)
+          </p>
+          <div id="atomGrid" class="grid grid-cols-10 gap-1.5 sm:gap-2"></div>
+        </div>
+
+        <!-- curva exponencial -->
+        <div class="mt-6">
+          <p class="mb-2 text-sm font-semibold text-stone-700">Curva de decaimento exponencial — N = N₀ · 0,5^(t/T½)</p>
+          <svg viewBox="0 0 100 52" preserveAspectRatio="none" class="h-56 w-full rounded-xl border border-orange-100 bg-gradient-to-b from-amber-50 to-orange-50 sm:h-64" role="img" aria-label="Curva exponencial do decaimento radioativo">
+            <g id="curveGuides"></g>
+            <polyline id="curvePoints" points="" fill="none" stroke="#F97316" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+            <circle id="curveMarker" cx="0" cy="0" r="2.4" fill="#C2410C" stroke="#FFFFFF" stroke-width="0.8"></circle>
+          </svg>
+        </div>
+      </section>
+    </div>
+
+    <!-- nota de integração -->
+    <div class="mt-8 rounded-2xl border border-orange-200 bg-orange-50 p-5 text-sm text-stone-600">
+      <p class="font-bold text-kripta-orange">Integração com o backend (Prontos para conectar)</p>
+      <p class="mt-1">
+        Este painel consome os endpoints já existentes no projeto Spring Boot:
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs text-stone-700">/api/radioactive-decay/isotopes</code> e
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs text-stone-700">/api/radioactive-decay/calculate</code>.
+        Basta servir esta pasta como estática (por ex.: em <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">src/main/resources/static</code>)
+        e definir <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">window.KB_API_BASE</code> com a URL da API.
+        O objeto global <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">window.KB</code> também expõe
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">calculateDecay</code>,
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">calculateDarwin</code>,
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getFossils</code> e
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getLayers</code>.
+      </p>
+    </div>
+  </main>
+
+  <!-- ============================================================
+       FOOTER (laranja, texto branco)
+       ============================================================ -->
+  <footer class="mt-10 bg-kripta-orange text-white">
+    <div class="mx-auto max-w-7xl px-4 py-8 text-center">
+      <p class="text-sm font-bold">Feito por: Murylo, Pedro Bernardes, Kelvin, Vinícius, Pedro Manoel</p>
+      <a
+        href="https://github.com/Nel-iDev/Kriptobioze"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Repositório no GitHub (Kriptobioze)"
+        class="mt-3 inline-flex items-center gap-2 rounded-xl bg-white/15 px-4 py-2 text-sm font-bold transition hover:bg-white/25"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+        </svg>
+        github.com/Nel-iDev/Kriptobioze
+      </a>
+      <p class="mt-4 text-xs font-semibold opacity-90">2026 - Biologia, 3°DS</p>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       DRAWER — menu lateral (conteúdo apenas do texto do PDF)
+       ============================================================ -->
+  <div id="backdrop" class="fixed inset-0 z-40 hidden bg-black/40 backdrop-blur-[2px]"></div>
+
+  <aside
+    id="drawer"
+    class="fixed right-0 top-0 z-50 flex h-full w-[85vw] max-w-sm translate-x-full flex-col overflow-y-auto bg-kripta-navy text-white shadow-2xl"
+    aria-label="Menu lateral — conteúdo do projeto"
+    aria-hidden="true"
+  >
+    <div class="sticky top-0 flex items-center justify-between bg-kripta-navy/95 px-5 py-4 backdrop-blur">
+      <div class="flex items-center gap-2">
+        <img src="assets/KriptaBranco.png" alt="Logo Kripta" class="h-8 w-auto">
+        <span class="font-display text-lg font-extrabold text-white">Kriptobioze</span>
+      </div>
+      <button
+        id="btnCloseDrawer"
+        type="button"
+        aria-label="Fechar menu"
+        class="rounded-lg p-2 text-white/80 transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-kripta-amber"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <line x1="5" y1="5" x2="19" y2="19"></line>
+          <line x1="5" y1="19" x2="19" y2="5"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="space-y-4 px-5 py-6">
+      <p class="text-xs font-bold uppercase tracking-widest text-kripta-amber">Tema · do tempo geológico ao algoritmo</p>
+
+      <details class="rounded-xl bg-white/5 p-4" open>
+        <summary class="font-display cursor-pointer text-base font-bold text-white">Tempo profundo</summary>
+        <p class="mt-2 text-sm leading-relaxed text-white/80">
+          No século XIX, acreditava-se que a Terra tinha aproximadamente 6.000 anos (interpretações
+          literais de textos bíblicos). Para Darwin, essa escala era um obstáculo: a especiação por
+          seleção natural exige dezenas ou centenas de milhões de anos.
+        </p>
+      </details>
+
+      <details class="rounded-xl bg-white/5 p-4">
+        <summary class="font-display cursor-pointer text-base font-bold text-white">Darwin no Chile (1835)</summary>
+        <p class="mt-2 text-sm leading-relaxed text-white/80">
+          A 2.800 m de altitude, Darwin encontrou fósseis de troncos de árvores (semelhantes às
+          araucárias) e conchas marinhas acima de estratos terrestres. Igrejas centenárias na costa
+          apresentavam desníveis de ~2 cm/século por soerguimento sísmico — o que exigia pelo menos
+          14 milhões de anos para erguer a floresta.
+        </p>
+      </details>
+
+      <details class="rounded-xl bg-white/5 p-4">
+        <summary class="font-display cursor-pointer text-base font-bold text-white">História dos isótopos</summary>
+        <p class="mt-2 text-sm leading-relaxed text-white/80">
+          No século XX, técnicas físicas de datação absoluta baseadas no decaimento de isótopos
+          radioativos — Carbono-14, Urânio-235 e Potássio-40 — confirmaram a idade real da Terra em
+          4,5 bilhões de anos.
+        </p>
+        <div class="mt-3 space-y-2 text-xs text-white/85">
+          <p><span class="font-bold text-kripta-amber">C-14</span> · até 50 mil anos.</p>
+          <p><span class="font-bold text-kripta-amber">U-235 / K-40</span> · milhões ou bilhões de anos.</p>
+        </div>
+      </details>
+
+      <details class="rounded-xl bg-white/5 p-4">
+        <summary class="font-display cursor-pointer text-base font-bold text-white">No simulador</summary>
+        <p class="mt-2 text-sm leading-relaxed text-white/80">
+          Simule a perda de massa ativa (meia-vida) à medida que o tempo passa, revelando em tempo real
+          a idade estimada do fóssil.
+        </p>
+        <a href="#dashboard" class="mt-3 inline-block rounded-lg bg-kripta-orange px-4 py-2 text-sm font-bold text-white transition hover:bg-orange-600">
+          ► Abrir o simulador
+        </a>
+      </details>
+
+      <p class="pt-2 text-center text-[11px] text-white/50">
+        Conteúdo baseado apenas no texto do PDF da atividade.
+      </p>
+    </div>
+  </aside>
+
+  <!-- Script: para conectar ao backend, defina antes do load:
+       <script>window.KB_API_BASE = "http://localhost:8080"</script> -->
+  <script src="js/app.js"></script>
+</body>
+</html>
