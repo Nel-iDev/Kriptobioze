@@ -1,5 +1,5 @@
 /* Service Worker do Kriptobioze (PWA) */
-const VERSION = "kb-pwa-v1.0";
+const VERSION = "kb-pwa-v2.0";
 const PRECACHE = [
   "index.html",
   "css/styles.css",
@@ -43,13 +43,16 @@ self.addEventListener("fetch", (event) => {
       const key = toCacheKey(url);
 
       if (req.mode === "navigate") {
-        const hit = await caches.match("index.html");
-        const page = (await caches.match(key)) || hit;
-        if (page) return page;
-        const fresh = await fetch(req);
-        const cache = await caches.open(VERSION);
-        cache.put("index.html", fresh.clone());
-        return fresh;
+        try {
+          const fresh = await fetch(req);
+          const cache = await caches.open(VERSION);
+          cache.put("index.html", fresh.clone());
+          return fresh;
+        } catch (err) {
+          const hit = await caches.match("index.html");
+          if (hit) return hit;
+          throw err;
+        }
       }
 
       const cached = await caches.match(key);
