@@ -21,6 +21,14 @@ erDiagram
         varchar localidade_descoberta
         text descricao
     }
+    ISOTOPES {
+        bigint ID PK
+        varchar name
+        varchar symbol
+        double half_life_years
+        text description
+        text used_for
+    }
 
     CAMADA ||--o{ FOSSIL : "1 para N"
 ```
@@ -47,11 +55,23 @@ erDiagram
         │ ID               PK    │
         │ nome_cientifico        │
         │ taxonomia              │
-        │ idade_estimada         │
+        │ idle_estimada         │
         │ fk_camada        FK    │ ──── CAMADA(ID)
         │ localidade_descoberta  │
         │ descricao              │
         └────────────────────────┘
+
+
+        ┌──────────────────────────┐
+        │        ISOTOPES          │
+        ├──────────────────────────┤
+        │ ID               PK      │
+        │ name                     │
+        │ symbol                   │
+        │ half_life_years          │
+        │ description              │
+        │ used_for                 │
+        └──────────────────────────┘
 ```
 
 ## Regras de negócio (cardinalidade)
@@ -72,3 +92,8 @@ erDiagram
 | `fossil`     |                                       | `taxonomia`            | `taxonomia`        |
 | `fossil`     |                                       | `idade_estimada`       | `idadeEstimada`    |
 | `fossil`     |                                       | `fk_camada`            | `camada` (`@ManyToOne`) |
+| `isotopes`   | `com.kriptobioze.model.Isotope`       | `name`                 | `name`                  |
+| `isotopes`   |                                       | `symbol`               | `symbol`                |
+| `isotopes`   |                                       | `half_life_years`      | `halfLifeYears`         |
+| `isotopes`   |                                       | `description`          | `description`           |
+| `isotopes`   |                                       | `used_for`             | `usedFor`               |
