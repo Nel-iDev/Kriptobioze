@@ -484,7 +484,7 @@
     if (note) {
       note.textContent = apiMode === "api"
         ? "Consultado via GET /api/fossils/estratigrafia — mesma consulta DQL executada no PostgreSQL."
-        : "Modo local — mostra o resultado esperado da consulta DQL (database/03_consultas.sql), com o backend ligado a tabela vem da API.";
+        : "Resultado esperado da consulta DQL (database/03_consultas.sql). Com o backend ligado, a tabela vem da API.";
     }
   }
 

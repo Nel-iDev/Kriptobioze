@@ -4,14 +4,15 @@
   /* ============================================================
      Atividade C — Modelagem Estratigráfica de Fósseis e Camadas.
      Renderiza a tabela do DQL (INNER JOIN + ORDER BY
-     profundidade_media DESC) vinda de GET /api/fossils/estratigrafia,
-     com fallback local igual ao dataset do database/02_dados_iniciais.sql.
+     profundidade_media DESC). Com o backend ligado, os dados vêm
+     de GET /api/fossils/estratigrafia; sem backend, mostra o
+     resultado esperado da consulta DQL (database/03_consultas.sql).
      ============================================================ */
 
   const $ = (sel) => document.querySelector(sel);
   const API = window.KB_API_BASE || "";
 
-  const FALLBACK = [
+  const EXPECTED = [
     { fossilId: 5, nomeCientifico: "Stromatólito de cianobactérias", taxonomia: "Cyanobacteria (microbialito fóssil)", idadeEstimadaMa: 3500, nomeEra: "Arqueano", profundidadeMedia: 10000, tipoRocha: "Metamórfica" },
     { fossilId: 4, nomeCientifico: "Dickinsonia costata", taxonomia: "Proarticulata · Dickinsoniidae", idadeEstimadaMa: 560, nomeEra: "Proterozóico", profundidadeMedia: 5000, tipoRocha: "Metamórfica" },
     { fossilId: 3, nomeCientifico: "Paradoxides sp.", taxonomia: "Trilobita · Paradoxididae", idadeEstimadaMa: 505, nomeEra: "Paleozóico", profundidadeMedia: 1500, tipoRocha: "Sedimentar" },
@@ -29,9 +30,8 @@
   const fmtEraAge = (ma) =>
     ma < 1 ? fmtNum(Math.round(ma * 1e6)) + " anos" : fmtNum(ma) + " Ma";
 
-  function render(rows, viaApi) {
+  function render(rows) {
     const body = $("#estratigrafiaBody");
-    const note = $("#estratigrafiaNote");
     if (!body) return;
 
     body.innerHTML = "";
@@ -48,17 +48,10 @@
         '<td class="px-4 py-3 font-bold text-stone-800">' + fmtEraAge(f.idadeEstimadaMa) + "</td>";
       body.appendChild(tr);
     });
-
-    if (note) {
-      note.textContent = viaApi
-        ? "Consultado via GET /api/fossils/estratigrafia — mesma consulta DQL executada no PostgreSQL."
-        : "Modo local — mostra o resultado esperado da consulta DQL (database/03_consultas.sql), com o backend ligado a tabela vem da API.";
-    }
   }
 
   async function boot() {
-    let rows = FALLBACK;
-    let viaApi = false;
+    let rows = EXPECTED;
 
     if (API) {
       try {
@@ -67,15 +60,14 @@
           const data = await res.json();
           if (Array.isArray(data) && data.length) {
             rows = data;
-            viaApi = true;
           }
         }
       } catch (_err) {
-        /* sem API: mantém o fallback local */
+        /* sem API: mantém o resultado esperado da consulta DQL */
       }
     }
 
-    render(rows, viaApi);
+    render(rows);
   }
 
   boot();
