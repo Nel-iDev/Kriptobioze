@@ -13,38 +13,45 @@ public class DarwinCalculationService {
             throw new IllegalArgumentException("Taxa de elevação deve ser maior que zero");
         }
 
+        // 1) Converter a altitude para centímetros (1 m = 100 cm) e a taxa
+        //    de cm/século para cm/ano (1 século = 100 anos).
+        Double altitudeCm = altitudeMeters * 100.0;
         Double elevationRatePerYear = elevationRatePerCentury / 100.0;
-        Double yearsRequired = altitudeMeters / elevationRatePerYear;
-        Double millionsOfYears = yearsRequired / 1_000_000.0;
-        String classification = classifyTimeScale(millionsOfYears);
 
-        return new CalculationResult(altitudeMeters, elevationRatePerCentury, yearsRequired, millionsOfYears, classification);
+        // 2) Cálculo de proporção: idade mínima (anos) para a rocha se
+        //    erguer até o topo = altitude (cm) / taxa de soerguimento (cm/ano).
+        Double yearsRequired = altitudeCm / elevationRatePerYear;
+        Double millionsOfYears = yearsRequired / 1_000_000.0;
+
+        // 3) Estrutura de controle de fluxo condicional (if-else) que
+        //    classifica o resultado conforme o texto da atividade.
+        String classification = classifyTimeScale(yearsRequired);
+
+        return new CalculationResult(altitudeMeters, elevationRatePerCentury, altitudeCm, yearsRequired, millionsOfYears, classification);
     }
 
-    private String classifyTimeScale(Double millionsOfYears) {
-        if (millionsOfYears < 0.001) {
-            return "Escala humana - resultado em décadas/séculos";
-        } else if (millionsOfYears < 1) {
-            return "Escala geológica curta - milhares a centenas de milhares de anos";
-        } else if (millionsOfYears < 100) {
-            return "Escala geológica média - milhões de anos (período)";
-        } else if (millionsOfYears < 500) {
-            return "Escala geológica longa - dezenas de milhões de anos (era)";
+    private String classifyTimeScale(Double yearsRequired) {
+        if (yearsRequired < 6000.0) {
+            return "ALERTA — escala dogmática e biologicamente inviável: menos de 6.000 anos são insuficientes para a evolução";
+        } else if (yearsRequired > 1_000_000.0) {
+            return "VALIDAÇÃO CIENTÍFICA — tempo profundo: mais de 1 milhão de anos confirmam a evolução e a idade da Terra";
         } else {
-            return "Escala geológica profunda - centenas de milhões a bilhões de anos";
+            return "Escala intermediária — entre 6.000 e 1 milhão de anos";
         }
     }
 
     public static class CalculationResult {
         private Double altitudeMeters;
         private Double elevationRatePerCentury;
+        private Double altitudeCm;
         private Double yearsRequired;
         private Double millionsOfYears;
         private String classification;
 
-        public CalculationResult(Double altitudeMeters, Double elevationRatePerCentury, Double yearsRequired, Double millionsOfYears, String classification) {
+        public CalculationResult(Double altitudeMeters, Double elevationRatePerCentury, Double altitudeCm, Double yearsRequired, Double millionsOfYears, String classification) {
             this.altitudeMeters = altitudeMeters;
             this.elevationRatePerCentury = elevationRatePerCentury;
+            this.altitudeCm = altitudeCm;
             this.yearsRequired = yearsRequired;
             this.millionsOfYears = millionsOfYears;
             this.classification = classification;
@@ -52,6 +59,7 @@ public class DarwinCalculationService {
 
         public Double getAltitudeMeters() { return altitudeMeters; }
         public Double getElevationRatePerCentury() { return elevationRatePerCentury; }
+        public Double getAltitudeCm() { return altitudeCm; }
         public Double getYearsRequired() { return yearsRequired; }
         public Double getMillionsOfYears() { return millionsOfYears; }
         public String getClassification() { return classification; }

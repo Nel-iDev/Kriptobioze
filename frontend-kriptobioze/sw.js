@@ -1,9 +1,14 @@
 /* Service Worker do Kriptobioze (PWA) */
-const VERSION = "kb-pwa-v2.0";
+const VERSION = "kb-pwa-v3.0";
 const PRECACHE = [
   "index.html",
+  "pages/backA.html",
+  "pages/dataC.html",
   "css/styles.css",
   "js/app.js",
+  "js/ui.js",
+  "js/backA.js",
+  "js/dataC.js",
   "manifest.json",
   "icons/icon-192.png",
   "icons/icon-512.png"
