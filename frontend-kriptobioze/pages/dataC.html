@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kriptobioze — Atividade C · Modelagem Estratigráfica</title>
+  <meta name="theme-color" content="#17233B">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" type="image/png" href="../icons/icon-192.png">
+  <meta name="description" content="Atividade C: modelagem de banco de dados — camadas estratigráficas de fósseis (DER, DDL e consultas DQL).">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            kripta: {
+              orange: "#F97316",
+              amber: "#FBBF24",
+              aqua: "#2DD4BF",
+              lilac: "#C084FC",
+              navy: "#17233B"
+            }
+          },
+          fontFamily: {
+            display: ['"Baloo 2"', "sans-serif"],
+            body: ["Nunito", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body class="font-body bg-amber-50 text-stone-800 antialiased">
+
+  <!-- ============================================================
+       NAVBAR com as três páginas do projeto
+       ============================================================ -->
+  <nav class="fixed inset-x-0 top-0 z-40 h-16 bg-kripta-orange shadow-lg">
+    <div class="flex h-full w-full items-center justify-between px-2 sm:px-3">
+      <a href="../index.html" class="flex items-center gap-2" aria-label="Kripta — página principal">
+        <img src="../assets/KriptaBranco.png" alt="Logo Kripta" class="h-9 w-auto sm:h-10">
+      </a>
+
+      <div class="hidden min-w-0 items-center gap-1 px-1 md:flex sm:gap-2">
+        <a href="../index.html" class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-bold text-white/90 transition hover:bg-white/20 hover:text-white sm:px-3 sm:text-sm">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+            <line x1="8" y1="20" x2="16" y2="20"></line>
+            <line x1="12" y1="16" x2="12" y2="20"></line>
+          </svg>
+          Front
+        </a>
+        <a href="backA.html" class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-bold text-white/90 transition hover:bg-white/20 hover:text-white sm:px-3 sm:text-sm">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Back
+        </a>
+        <a href="dataC.html" aria-current="page" class="flex items-center gap-1.5 rounded-lg bg-white px-2.5 py-1.5 text-[11px] font-bold text-kripta-navy shadow-sm transition sm:px-3 sm:text-sm">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+            <path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"></path>
+            <path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"></path>
+          </svg>
+          SQL
+        </a>
+      </div>
+
+      <button
+        id="btnMenu"
+        type="button"
+        aria-label="Abrir menu lateral"
+        aria-expanded="false"
+        class="rounded-lg p-2 text-white transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+      >
+        <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- DinoBranco + "Kriptobioze" centralizados na navbar — apenas mobile,
+         já visíveis desde a entrada -->
+    <div class="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 whitespace-nowrap md:hidden" aria-hidden="true">
+      <img src="../assets/DinoBranco.png" alt="" class="h-8 w-auto">
+      <span class="font-display text-sm font-extrabold tracking-wide text-white sm:text-base">Kriptobioze</span>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO — cena de savana pré-histórica (CSS animado) com o
+       título em card verde-água flutuante sobre o "gif" dos dinos
+       ============================================================ -->
+  <header class="relative overflow-hidden bg-teal-500 pt-16">
+    <div class="savana-sky relative flex min-h-[320px] w-full flex-col items-center justify-center sm:min-h-[380px]">
+
+      <!-- sol -->
+      <div class="kb-sun absolute right-[6%] top-[9%] h-14 w-14 rounded-full md:h-20 md:w-20"></div>
+
+      <!-- nuvens -->
+      <div class="kb-cloud" style="top: 14%; --dur: 80s; --delay: -20s;"></div>
+      <div class="kb-cloud" style="top: 22%; --dur: 110s; --delay: -64s; opacity: .7;"></div>
+      <div class="kb-cloud" style="top: 8%; --dur: 140s; --delay: -102s; opacity: .5;"></div>
+
+      <!-- colinas em camadas -->
+      <div class="hill left-[-5%] bottom-[16%] h-[34%] w-[70%] bg-orange-900/25"></div>
+      <div class="hill right-[-8%] bottom-[13%] h-[40%] w-[75%] bg-orange-950/35"></div>
+      <div class="hill left-[-12%] bottom-[8%] h-[42%] w-[110%] bg-amber-600/45"></div>
+
+      <!-- chão de terra -->
+      <div class="absolute inset-x-0 bottom-0 h-[18%] bg-gradient-to-b from-amber-800 to-orange-950"></div>
+
+      <!-- árvores distantes -->
+      <img src="../assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--far" style="left:6%; bottom:14%; height:64px;">
+      <img src="../assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--far" style="left:24%; bottom:12%; height:48px;">
+      <img src="../assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--far" style="left:64%; bottom:14%; height:58px;">
+      <img src="../assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--far" style="left:90%; bottom:13%; height:62px;">
+
+      <!-- pterodáctilo planando -->
+      <div class="kb-ptero" style="top: 14%; --dur: 50s;">
+        <img src="../assets/dino-voador-laranja.png" alt="" aria-hidden="true" class="kb-flap h-6 w-auto sm:h-8">
+      </div>
+
+      <!-- dinossauros andando (silhuetas brancas, pequenininhos) -->
+      <div class="walker walker--back dino-walk-right" style="bottom: 14%; --dur: 24s; --delay: -6s;">
+        <div class="dino-shadow"></div>
+        <img src="../assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-4 w-auto">
+      </div>
+      <div class="walker walker--front dino-walk-left" style="bottom: 12%; --dur: 36s; --delay: -18s;">
+        <div class="dino-shadow"></div>
+        <img src="../assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-6 w-auto">
+      </div>
+      <div class="walker walker--back dino-walk-right" style="bottom: 16%; --dur: 19s; --delay: -4s;">
+        <div class="dino-shadow"></div>
+        <img src="../assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-4 w-auto">
+      </div>
+      <div class="walker walker--front dino-walk-left" style="bottom: 13%; --dur: 44s; --delay: -29s;">
+        <div class="dino-shadow"></div>
+        <img src="../assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-5 w-auto">
+      </div>
+      <div class="walker walker--back dino-walk-right" style="bottom: 15%; --dur: 30s; --delay: -13s;">
+        <div class="dino-shadow"></div>
+        <img src="../assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-4 w-auto">
+      </div>
+      <div class="walker walker--front dino-walk-left" style="bottom: 11%; --dur: 54s; --delay: -41s;">
+        <div class="dino-shadow"></div>
+        <img src="../assets/DinoBranco.png" alt="" aria-hidden="true" class="dino-bob h-7 w-auto">
+      </div>
+
+      <!-- árvores próximas -->
+      <img src="../assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--near" style="left:5%; bottom:2%; height:110px;">
+      <img src="../assets/arvore-menor.png" alt="" aria-hidden="true" class="tree-img tree-img--near" style="left:88%; bottom:3%; height:86px;">
+
+      <!-- vinheta para leitura do título -->
+      <div class="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(ellipse_at_center,rgba(30,20,5,0)_35%,rgba(30,20,5,0.35)_100%)]"></div>
+
+      <!-- TÍTULO EM CARD VERDE-ÁGUA FLUTUANTE -->
+      <div class="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-4 py-10">
+        <div class="pointer-events-auto max-w-3xl rounded-3xl bg-teal-500/85 p-6 text-center shadow-2xl backdrop-blur-sm sm:p-8">
+          <p class="font-display text-xs font-bold uppercase tracking-widest text-white/80 sm:text-sm">Proposta C · Banco de Dados</p>
+          <h1 class="font-display mt-2 text-2xl font-extrabold text-white sm:text-4xl">
+            Modelagem Estratigráfica de Fósseis e Camadas
+          </h1>
+          <p class="mt-3 text-sm font-semibold text-white/90 sm:text-base">
+            Lei da superposição, proposta por Darwin: <strong>os fósseis de camadas mais profundas são, em tese,
+            mais antigos</strong>. A tabela abaixo é o resultado da consulta DQL do banco relacional — veja o DER,
+            o DDL e as queries em <code class="rounded bg-white/20 px-1.5 py-0.5 font-mono text-xs">database/</code>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-4 py-8 sm:py-10">
+
+    <!-- ============================================================
+         ESTRATIGRAFIA — Tabela de fósseis por camada
+         ============================================================ -->
+    <section id="estratigrafia" class="scroll-mt-20">
+      <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="font-display text-sm font-bold uppercase tracking-widest text-teal-600">Banco Relacional · Consultas DQL</p>
+          <h2 class="font-display mt-1 text-2xl font-extrabold text-kripta-navy sm:text-3xl">
+            Estratigrafia de Fósseis e Camadas
+          </h2>
+          <p class="mt-2 max-w-3xl text-sm text-stone-600 sm:text-base">
+            Um
+            <code class="rounded bg-teal-100 px-1.5 py-0.5 font-mono text-xs text-teal-700">INNER JOIN</code>
+            entre <code class="rounded bg-teal-100 px-1.5 py-0.5 font-mono text-xs text-teal-700">CAMADA</code> e
+            <code class="rounded bg-teal-100 px-1.5 py-0.5 font-mono text-xs text-teal-700">FOSSIL</code>
+            ordenado por
+            <code class="rounded bg-teal-100 px-1.5 py-0.5 font-mono text-xs text-teal-700">profundidade_media DESC</code>
+            — da camada mais profunda (mais antiga, no topo) para a superfície (mais recente).
+          </p>
+        </div>
+        <span id="estratigrafiaNote" class="max-w-sm rounded-2xl bg-white px-4 py-2 text-xs font-bold text-stone-600 shadow-sm">
+          Carregando…
+        </span>
+      </div>
+
+      <div class="overflow-hidden rounded-3xl border border-teal-200 bg-white shadow-lg shadow-teal-100/60">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[720px] text-left text-sm">
+            <thead class="bg-kripta-navy text-white">
+              <tr>
+                <th class="px-5 py-3.5 font-bold">Profundidade média</th>
+                <th class="px-5 py-3.5 font-bold">Era</th>
+                <th class="px-5 py-3.5 font-bold">Tipo de rocha</th>
+                <th class="px-5 py-3.5 font-bold">Fóssil (nome científico)</th>
+                <th class="px-5 py-3.5 font-bold">Taxonomia</th>
+                <th class="px-5 py-3.5 font-bold">Idade estimada</th>
+              </tr>
+            </thead>
+            <tbody id="estratigrafiaBody"></tbody>
+          </table>
+        </div>
+        <p class="border-t border-teal-100 bg-teal-50 px-5 py-3 text-xs text-stone-500">
+          ⬆ Mais profundo = mais antigo · ⬇ Mais raso = mais recente. Dataset do DataSeeder
+          (<code class="font-mono">database/02_dados_iniciais.sql</code>).
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Artefatos do banco de dados
+         ============================================================ -->
+    <section class="mt-8 scroll-mt-20">
+      <h2 class="font-display text-2xl font-extrabold text-kripta-navy sm:text-3xl">Artefatos da modelagem</h2>
+      <p class="mt-2 max-w-3xl text-sm text-stone-600 sm:text-base">
+        Todo o banco relacional está documentado em
+        <code class="rounded bg-teal-100 px-1.5 py-0.5 font-mono text-xs text-teal-700">database/</code>
+        na raiz do repositório. Clique para abrir cada artefato.
+      </p>
+
+      <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <a
+          href="../database/DER.md"
+          class="group rounded-3xl border border-teal-200 bg-white p-5 shadow-lg shadow-teal-100/60 transition hover:-translate-y-1 hover:shadow-xl"
+          rel="noopener"
+        >
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-kripta-navy font-display text-lg font-extrabold text-white">1</div>
+          <h3 class="mt-4 font-display text-base font-bold text-kripta-navy">DER</h3>
+          <p class="mt-1 text-xs text-stone-500">Diagrama Entidade-Relacionamento (Mermaid) com todas as tabelas e relações.</p>
+        </a>
+
+        <a
+          href="../database/01_schema.sql"
+          class="group rounded-3xl border border-teal-200 bg-white p-5 shadow-lg shadow-teal-100/60 transition hover:-translate-y-1 hover:shadow-xl"
+          rel="noopener"
+        >
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-kripta-navy font-display text-lg font-extrabold text-white">2</div>
+          <h3 class="mt-4 font-display text-base font-bold text-kripta-navy">DDL — Schema</h3>
+          <p class="mt-1 text-xs text-stone-500">Criação do banco e das tabelas CAMADA, ERA, FOSSIL e TAXONOMIA com chaves e FKs.</p>
+        </a>
+
+        <a
+          href="../database/02_dados_iniciais.sql"
+          class="group rounded-3xl border border-teal-200 bg-white p-5 shadow-lg shadow-teal-100/60 transition hover:-translate-y-1 hover:shadow-xl"
+          rel="noopener"
+        >
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-kripta-navy font-display text-lg font-extrabold text-white">3</div>
+          <h3 class="mt-4 font-display text-base font-bold text-kripta-navy">DML — Dados iniciais</h3>
+          <p class="mt-1 text-xs text-stone-500">INSERTs do dataset estratigráfico utilizado na tabela acima (DataSeeder).</p>
+        </a>
+
+        <a
+          href="../database/03_consultas.sql"
+          class="group rounded-3xl border border-teal-200 bg-white p-5 shadow-lg shadow-teal-100/60 transition hover:-translate-y-1 hover:shadow-xl"
+          rel="noopener"
+        >
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-kripta-navy font-display text-lg font-extrabold text-white">4</div>
+          <h3 class="mt-4 font-display text-base font-bold text-kripta-navy">DQL — Consultas</h3>
+          <p class="mt-1 text-xs text-stone-500">SELECTs com INNER JOIN, ORDER BY e CASE para a estratigrafia por idade.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="mt-10 bg-kripta-orange text-white">
+    <div class="mx-auto max-w-7xl px-4 py-8 text-center">
+      <p class="text-sm font-bold">Feito por: Murylo, Pedro Bernardes, Kelvin, Vinícius, Pedro Manoel</p>
+      <a
+        href="https://github.com/Nel-iDev/Kriptobioze"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Repositório no GitHub (Kriptobioze)"
+        class="mt-3 inline-flex items-center gap-2 rounded-xl bg-white/15 px-4 py-2 text-sm font-bold transition hover:bg-white/25"
+      >
+        github.com/Nel-iDev/Kriptobioze
+      </a>
+      <p class="mt-4 text-xs font-semibold opacity-90">2026 - Biologia, 3°DS</p>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       DRAWER — menu lateral (conteúdo do texto do PDF)
+       ============================================================ -->
+  <div id="backdrop" class="fixed inset-0 z-40 hidden bg-black/40 backdrop-blur-[2px]"></div>
+
+  <aside
+    id="drawer"
+    class="fixed right-0 top-0 z-50 flex h-full w-[85vw] max-w-sm translate-x-full flex-col overflow-y-auto bg-kripta-navy text-white shadow-2xl"
+    aria-label="Menu lateral — conteúdo do projeto"
+    aria-hidden="true"
+  >
+    <div class="sticky top-0 flex items-center justify-between bg-kripta-navy/95 px-5 py-4 backdrop-blur">
+      <div class="flex items-center gap-2">
+        <img src="../assets/KriptaBranco.png" alt="Logo Kripta" class="h-8 w-auto">
+        <span class="font-display text-lg font-extrabold text-white">Kriptobioze</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <a href="../index.html" title="Front" aria-label="Página Front" class="rounded-lg p-2 text-white/80 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-kripta-amber">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+            <line x1="8" y1="20" x2="16" y2="20"></line>
+            <line x1="12" y1="16" x2="12" y2="20"></line>
+          </svg>
+        </a>
+        <a href="backA.html" title="Back" aria-label="Página Back" class="rounded-lg p-2 text-white/80 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-kripta-amber">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </a>
+        <a href="dataC.html" title="SQL" aria-label="Página SQL" class="rounded-lg p-2 text-white/80 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-kripta-amber">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+            <path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"></path>
+            <path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"></path>
+          </svg>
+        </a>
+        <button
+        id="btnCloseDrawer"
+        type="button"
+        aria-label="Fechar menu"
+        class="rounded-lg p-2 text-white/80 transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-kripta-amber"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <line x1="5" y1="5" x2="19" y2="19"></line>
+          <line x1="5" y1="19" x2="19" y2="5"></line>
+        </svg>
+      </button>
+      </div>
+    </div>
+
+    <div class="space-y-4 px-5 py-6">
+      <p class="text-xs font-bold uppercase tracking-widest text-kripta-amber">Tema · do tempo geológico ao algoritmo</p>
+
+      <details class="rounded-xl bg-white/5 p-4" open>
+        <summary class="font-display cursor-pointer text-base font-bold text-white">Tempo profundo</summary>
+        <p class="mt-2 text-sm leading-relaxed text-white/80">
+          No século XIX, acreditava-se que a Terra tinha aproximadamente 6.000 anos (interpretações
+          literais de textos bíblicos). Para Darwin, essa escala era um obstáculo: a especiação por
+          seleção natural exige dezenas ou centenas de milhões de anos.
+        </p>
+      </details>
+
+      <details class="rounded-xl bg-white/5 p-4">
+        <summary class="font-display cursor-pointer text-base font-bold text-white">Darwin no Chile (1835)</summary>
+        <p class="mt-2 text-sm leading-relaxed text-white/80">
+          A 2.800 m de altitude, Darwin encontrou fósseis de troncos de árvores (semelhantes às
+          araucárias) e conchas marinhas acima de estratos terrestres. Igrejas centenárias na costa
+          apresentavam desníveis de ~2 cm/século por soerguimento sísmico — o que exigia pelo menos
+          14 milhões de anos para erguer a floresta.
+        </p>
+      </details>
+
+      <details class="rounded-xl bg-white/5 p-4">
+        <summary class="font-display cursor-pointer text-base font-bold text-white">História dos isótopos</summary>
+        <p class="mt-2 text-sm leading-relaxed text-white/80">
+          No século XX, técnicas físicas de datação absoluta baseadas no decaimento de isótopos
+          radioativos — Carbono-14, Urânio-235 e Potássio-40 — confirmaram a idade real da Terra em
+          4,5 bilhões de anos.
+        </p>
+        <div class="mt-3 space-y-2 text-xs text-white/85">
+          <p><span class="font-bold text-kripta-amber">C-14</span> · até 50 mil anos.</p>
+          <p><span class="font-bold text-kripta-amber">U-235 / K-40</span> · milhões ou bilhões de anos.</p>
+        </div>
+      </details>
+
+      <p class="pt-2 text-center text-[11px] text-white/50">
+        Conteúdo baseado apenas no texto do PDF da atividade.
+      </p>
+    </div>
+  </aside>
+
+  <!-- Para conectar ao backend: <script>window.KB_API_BASE = "http://localhost:8080"</script> antes destes scripts -->
+  <script src="../js/ui.js"></script>
+  <script src="../js/dataC.js"></script>
+</body>
+</html>

@@ -52,6 +52,33 @@
       <a href="#hero" class="flex items-center gap-2" aria-label="Kripta — início">
         <img src="assets/KriptaBranco.png" alt="Logo Kripta" class="h-9 w-auto sm:h-10">
       </a>
+
+      <div class="hidden min-w-0 items-center gap-1 px-1 md:flex sm:gap-2">
+        <a href="index.html" aria-current="page" class="flex items-center gap-1.5 rounded-lg bg-white px-2.5 py-1.5 text-[11px] font-bold text-kripta-navy shadow-sm transition sm:px-3 sm:text-sm">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+            <line x1="8" y1="20" x2="16" y2="20"></line>
+            <line x1="12" y1="16" x2="12" y2="20"></line>
+          </svg>
+          Front
+        </a>
+        <a href="pages/backA.html" class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-bold text-white/90 transition hover:bg-white/20 hover:text-white sm:px-3 sm:text-sm">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Back
+        </a>
+        <a href="pages/dataC.html" class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-bold text-white/90 transition hover:bg-white/20 hover:text-white sm:px-3 sm:text-sm">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+            <path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"></path>
+            <path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"></path>
+          </svg>
+          SQL
+        </a>
+      </div>
+
       <button
         id="btnMenu"
         type="button"
@@ -65,6 +92,14 @@
           <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg>
       </button>
+    </div>
+
+    <!-- Centro da navbar (mobile): vazio no topo; DinoBranco + "Kriptobioze"
+         entram suavemente assim que a cena animada dos dinossauros começa a
+         sair da visão (posicionamento e transição vêm do css/styles.css) -->
+    <div id="navCenter" aria-hidden="true">
+      <img src="assets/DinoBranco.png" alt="" class="h-8 w-auto">
+      <span class="font-display text-sm font-extrabold tracking-wide text-white sm:text-base">Kriptobioze</span>
     </div>
   </nav>
 
@@ -152,197 +187,169 @@
   </header>
 
   <!-- ============================================================
-       DASHBOARD — Simulador de Decaimento Radioativo (Proposta B)
+       ZONA DE CONTROLE — play/reset flutuantes à direita (LIBRAS)
        ============================================================ -->
-  <main id="dashboard" class="mx-auto max-w-7xl scroll-mt-20 px-4 py-10 sm:py-14">
-    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
-      <div>
-        <p class="font-display text-sm font-bold uppercase tracking-widest text-kripta-orange">Dashboard · Biologia &amp; Programação</p>
-        <h2 class="font-display mt-1 text-3xl font-extrabold text-kripta-navy sm:text-4xl">
-          Simulador de Decaimento Radioativo
-        </h2>
-        <p class="mt-2 max-w-2xl text-stone-600">
-          Simule a perda de massa ativa (meia-vida) ao longo do tempo e veja,
-          em tempo real, a idade estimada do fóssil.
-        </p>
-      </div>
-      <span id="apiStatus" class="inline-flex items-center gap-1.5 rounded-full bg-kripta-amber/20 px-3 py-1 text-xs font-bold text-stone-600">
-        Conectando…
-      </span>
+  <div id="controlsZone" class="relative">
+
+    <!-- torre de controles: fixa à direita, aparece alinhada ao card 1,
+         segue o scroll e para alguns pixels antes do rodapé -->
+    <div id="controlsTower" class="kb-controls--off" role="toolbar" aria-label="Controles do simulador">
+      <button
+        id="btnPlay"
+        type="button"
+        title="Simular decaimento"
+        aria-label="Simular decaimento"
+        class="bg-kripta-navy text-white transition hover:bg-black/85 active:scale-95"
+      >▶</button>
+      <button
+        id="btnReset"
+        type="button"
+        title="Resetar"
+        aria-label="Resetar"
+        class="border border-stone-300 bg-white text-stone-600 transition hover:bg-stone-100 active:scale-95"
+      >↺</button>
     </div>
-
-    <div class="grid gap-6 lg:grid-cols-2">
-
-      <!-- COLUNA 1 — controles -->
-      <section class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
-        <h3 class="font-display text-lg font-bold text-kripta-navy">1 · Selecione o isótopo de datação</h3>
-        <p class="mt-1 text-xs text-stone-500">
-          Carbono-14 para até 50 mil anos; Urânio-235 ou Potássio-40 para milhões/bilhões de anos. O banco
-          traz ainda U-238, Rb-87 e Sm-147 (meias-vidas astronômicas) para rochas, meteoritos.
-        </p>
-
-        <div id="isotopeGroup" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3" role="radiogroup" aria-label="Isótopo de datação"></div>
-
-        <h3 class="font-display mt-8 text-lg font-bold text-kripta-navy">2 · Massa ativa restante na rocha</h3>
-        <div class="mt-4">
-          <div class="flex items-center justify-between text-sm">
-            <span class="font-semibold text-stone-700" id="isotopeName">Carbono-14 (C-14)</span>
-            <span class="font-bold text-kripta-orange" id="pctOut">50,0% do isótopo na rocha</span>
-          </div>
-          <input
-            id="rangePct"
-            type="range"
-            min="0.1"
-            max="100"
-            step="0.1"
-            value="50"
-            class="mt-3 w-full cursor-pointer"
-            aria-label="Massa ativa restante, em porcentagem"
-          >
-        </div>
-
-        <!-- leituras -->
-        <div class="mt-6 grid grid-cols-3 gap-3 text-center">
-          <div class="rounded-2xl bg-kripta-orange p-4 text-white">
-            <p class="text-[11px] font-bold uppercase tracking-wide opacity-80">Idade estimada do fóssil</p>
-            <p id="ageOut" class="font-display mt-1 text-lg font-extrabold leading-tight sm:text-xl">5.730 anos</p>
-            <p id="eraOut" class="mt-2 inline-block max-w-full truncate rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"
-              title="Cenozóico">Cenozóico</p>
-          </div>
-          <div class="rounded-2xl bg-amber-100 p-4">
-            <p class="text-[11px] font-bold uppercase tracking-wide text-stone-500">Meias-vidas decorridas</p>
-            <p id="hlOut" class="font-display mt-1 text-lg font-extrabold text-kripta-navy sm:text-xl">0,00</p>
-          </div>
-          <div class="rounded-2xl bg-stone-100 p-4">
-            <p class="text-[11px] font-bold uppercase tracking-wide text-stone-500">Tempo simulado (anos)</p>
-            <p id="timeOut" class="font-display mt-1 text-lg font-extrabold text-kripta-navy sm:text-xl">0 anos</p>
-          </div>
-        </div>
-
-        <div class="mt-6 flex flex-wrap gap-3">
-          <button
-            id="btnPlay"
-            type="button"
-            class="rounded-xl bg-kripta-navy px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-black/85 active:scale-95"
-          >
-            ▶ Simular decaimento
-          </button>
-          <button
-            id="btnReset"
-            type="button"
-            class="rounded-xl border border-stone-300 bg-white px-5 py-2.5 text-sm font-bold text-stone-600 transition hover:bg-stone-100 active:scale-95"
-          >
-            ↺ Resetar
-          </button>
-        </div>
-      </section>
-
-      <!-- COLUNA 2 — visualização -->
-      <section class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
-        <h3 class="font-display text-lg font-bold text-kripta-navy">3 · Visualização do decaimento</h3>
-
-        <p class="mt-1 text-xs text-stone-500">Perda de massa ativa (meia-vida) em barra, átomos e curva exponencial.</p>
-
-        <!-- barra de massa -->
-        <div class="mt-5">
-          <div class="flex justify-between text-[11px] font-bold uppercase tracking-wide text-stone-500">
-            <span>100%</span><span id="isotopeBarLabel">C-14</span><span>0%</span>
-          </div>
-          <div class="mt-1 h-4 w-full overflow-hidden rounded-full bg-stone-200">
-            <div id="massBar" class="h-full rounded-full bg-gradient-to-r from-kripta-amber to-kripta-orange transition-all duration-200" style="width: 50%;"></div>
-          </div>
-        </div>
-
-        <!-- grid de átomos -->
-        <div class="mt-6">
-          <p class="mb-2 flex items-center gap-2 text-sm font-semibold text-stone-700">
-            <span class="inline-block h-3 w-3 rounded-sm bg-gradient-to-br from-kripta-amber to-kripta-orange ring-1 ring-kripta-orange/50"></span>
-            Isótopo ativo
-            <span class="ml-3 inline-block h-3 w-3 rounded-sm border border-dashed border-stone-400/60"></span>
-            Já decaído (produto-filha)
-          </p>
-          <div id="atomGrid" class="grid grid-cols-10 gap-1.5 sm:gap-2"></div>
-        </div>
-
-        <!-- curva exponencial -->
-        <div class="mt-6">
-          <p class="mb-2 text-sm font-semibold text-stone-700">Curva de decaimento exponencial — N = N₀ · 0,5^(t/T½)</p>
-          <svg viewBox="0 0 100 52" preserveAspectRatio="none" class="h-56 w-full rounded-xl border border-orange-100 bg-gradient-to-b from-amber-50 to-orange-50 sm:h-64" role="img" aria-label="Curva exponencial do decaimento radioativo">
-            <g id="curveGuides"></g>
-            <polyline id="curvePoints" points="" fill="none" stroke="#F97316" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></polyline>
-            <circle id="curveMarker" cx="0" cy="0" r="2.4" fill="#C2410C" stroke="#FFFFFF" stroke-width="0.8"></circle>
-          </svg>
-        </div>
-      </section>
-    </div>
-
-    <!-- nota de integração -->
-    <div class="mt-8 rounded-2xl border border-orange-200 bg-orange-50 p-5 text-sm text-stone-600">
-      <p class="font-bold text-kripta-orange">Integração com o backend (Prontos para conectar)</p>
-      <p class="mt-1">
-        Este painel consome os endpoints já existentes no projeto Spring Boot:
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs text-stone-700">/api/radioactive-decay/isotopes</code> e
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs text-stone-700">/api/radioactive-decay/calculate</code>.
-        Basta servir esta pasta como estática (por ex.: em <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">src/main/resources/static</code>)
-        e definir <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">window.KB_API_BASE</code> com a URL da API.
-        O objeto global <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">window.KB</code> também expõe
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">calculateDecay</code>,
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">calculateDarwin</code>,
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getFossils</code>,
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getLayers</code> e
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getEstratigrafia</code>
-        (este último alimenta a tabela de estratigrafia abaixo via
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">GET /api/fossils/estratigrafia</code>).
-      </p>
-    </div>
-  </main>
 
   <!-- ============================================================
-       ESTRATIGRAFIA — Tabela de fósseis por camada (consultas DQL)
+       DASHBOARD — Simulador de Decaimento Radioativo (Proposta B)
        ============================================================ -->
-  <section id="estratigrafia" class="mx-auto max-w-7xl scroll-mt-20 px-4 py-10 sm:py-14">
-    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+  <main id="dashboard" class="mx-auto max-w-7xl scroll-mt-20 px-4 py-8 sm:py-10">
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <p class="font-display text-sm font-bold uppercase tracking-widest text-kripta-orange">Modelagem · Banco de Dados</p>
-        <h2 class="font-display mt-1 text-3xl font-extrabold text-kripta-navy sm:text-4xl">
-          Estratigrafia de Fósseis e Camadas
+        <p class="font-display text-sm font-bold uppercase tracking-widest text-kripta-orange">Proposta B · UI/UX &amp; Design</p>
+        <h2 class="font-display mt-1 text-2xl font-extrabold text-kripta-navy sm:text-3xl">
+          Simulador de Decaimento Radioativo
         </h2>
-        <p class="mt-2 max-w-3xl text-sm text-stone-600 sm:text-base">
-          Lei da superposição, proposta por Darwin: <strong>os fósseis de camadas mais profundas
-          são, em tese, mais antigos</strong>. A tabela abaixo é o resultado de um
-          <code class="rounded bg-orange-100 px-1.5 py-0.5 font-mono text-xs text-kripta-orange">INNER JOIN</code>
-          entre <code class="rounded bg-orange-100 px-1.5 py-0.5 font-mono text-xs text-kripta-orange">CAMADA</code>
-          e <code class="rounded bg-orange-100 px-1.5 py-0.5 font-mono text-xs text-kripta-orange">FOSSIL</code>
-          ordenado por
-          <code class="rounded bg-orange-100 px-1.5 py-0.5 font-mono text-xs text-kripta-orange">profundidade_media DESC</code>
-          — da camada mais profunda (mais antiga, no topo) para a superfície (mais recente).
+        <p class="mt-2 max-w-2xl text-stone-600 lg:max-w-none lg:whitespace-nowrap">
+          Simule a perda de massa ativa (meia-vida) ao longo do tempo e veja, em tempo real, a idade estimada do fóssil.
         </p>
       </div>
-      <span id="estratigrafiaNote" class="max-w-sm rounded-2xl bg-white px-4 py-2 text-xs font-bold text-stone-600 shadow-sm">Carregando…</span>
     </div>
 
-    <div class="overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-lg shadow-orange-100/60">
-      <div class="overflow-x-auto">
-        <table class="w-full min-w-[720px] text-left text-sm">
-          <thead class="bg-kripta-navy text-white">
-            <tr>
-              <th class="px-5 py-3.5 font-bold">Profundidade média</th>
-              <th class="px-5 py-3.5 font-bold">Era</th>
-              <th class="px-5 py-3.5 font-bold">Tipo de rocha</th>
-              <th class="px-5 py-3.5 font-bold">Fóssil (nome científico)</th>
-              <th class="px-5 py-3.5 font-bold">Taxonomia</th>
-              <th class="px-5 py-3.5 font-bold">Idade estimada</th>
-            </tr>
-          </thead>
-          <tbody id="estratigrafiaBody"></tbody>
-        </table>
+    <div class="kb-dashboard-grid gap-6">
+
+      <div class="kb-col-left gap-6 sm:row-span-2 lg:row-auto">
+      <!-- 1 · Selecione o isótopo de datação -->
+      <section id="step1Card" class="rounded-3xl border border-orange-100 bg-white p-5 shadow-lg shadow-orange-100/60 sm:p-6">
+          <h3 class="font-display text-lg font-bold text-kripta-navy">1 · Selecione o isótopo de datação</h3>
+          <p class="mt-1 hidden text-xs text-stone-500 lg:block">
+            Carbono-14 para até 50 mil anos; Urânio-235 ou Potássio-40 para milhões/bilhões de anos. O banco
+            traz ainda U-238, Rb-87 e Sm-147 (meias-vidas astronômicas) para rochas, meteoritos.
+          </p>
+
+          <div id="isotopeGroup" class="mt-4 grid grid-cols-3 gap-1.5 sm:grid-cols-6 sm:gap-2" role="radiogroup" aria-label="Isótopo de datação"></div>
+
+        <div id="isotopeInfo" class="mt-3 flex min-h-[3.5rem] items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-center">
+          <p id="isotopeInfoText"></p>
+        </div>
+      </section>
+
+      <!-- Massa ativa restante na rocha (2) -->
+      <section id="stepMassCard" class="rounded-3xl border border-orange-100 bg-white p-5 shadow-lg shadow-orange-100/60 sm:p-6">
+        <div id="step2Wrap" class="kb-guide">
+          <h3 class="font-display text-lg font-bold text-kripta-navy">2 · Massa ativa restante na rocha</h3>
+          <div class="mt-4">
+            <div class="flex items-center justify-between text-sm">
+              <span class="font-semibold text-stone-700" id="isotopeName">Nenhum isótopo selecionado</span>
+              <span class="font-bold text-kripta-orange" id="pctOut">—</span>
+            </div>
+            <input
+              id="rangePct"
+              type="range"
+              min="0.1"
+              max="100"
+              step="0.1"
+              value="50"
+              class="mt-3 w-full cursor-pointer"
+              aria-label="Massa ativa restante, em porcentagem"
+            >
+          </div>
+
+          </div>
+      </section>
       </div>
-      <p class="border-t border-orange-100 bg-orange-50 px-5 py-3 text-xs text-stone-500">
-        ⬆ Mais profundo = mais antigo · ⬇ Mais raso = mais recente. Dataset do DataSeeder
-        (<code class="font-mono">database/02_dados_iniciais.sql</code>).
-      </p>
-    </div>
-  </section>
+
+      <!-- 3 · Resultados da datação (leituras movidas para cá, fora do card de massa) -->
+      <section id="stepReadCard" class="rounded-3xl border border-orange-100 bg-white p-5 shadow-lg shadow-orange-100/60 sm:p-6 sm:col-start-2 lg:col-auto">
+        <div id="stepLeiturasWrap" class="kb-guide">
+          <h3 class="font-display text-lg font-bold text-kripta-navy">3 · Resultados da datação</h3>
+          <div class="mt-4 grid grid-cols-1 gap-2 sm:mt-6 sm:gap-3">
+            <div class="rounded-2xl bg-kripta-orange p-2.5 text-white sm:p-4">
+              <p class="text-[10px] font-bold uppercase tracking-wide opacity-80 sm:text-[11px]">Idade estimada do fóssil</p>
+              <div class="mt-1 flex flex-col items-start gap-1 sm:mt-2">
+                <p id="ageOut" class="font-display text-base font-extrabold leading-tight sm:text-xl">—</p>
+                <p id="eraOut" class="inline-block max-w-full truncate rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide sm:text-[11px]">—</p>
+              </div>
+            </div>
+            <div class="rounded-2xl bg-amber-100 p-2.5 sm:p-4">
+              <p class="text-[10px] font-bold uppercase tracking-wide text-stone-500 sm:text-[11px]">Meias-vidas decorridas</p>
+              <p id="hlOut" class="font-display mt-1 text-base font-extrabold text-kripta-navy sm:text-xl">—</p>
+            </div>
+            <div class="rounded-2xl bg-stone-100 p-2.5 sm:p-4">
+              <p class="text-[10px] font-bold uppercase tracking-wide text-stone-500 sm:text-[11px]">Tempo simulado (anos)</p>
+              <p id="timeOut" class="font-display mt-1 text-base font-extrabold text-kripta-navy sm:text-xl">—</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 · Visualização / 5 · Gráfico do decaimento (lado a lado no desktop) -->
+      <div id="kbVizPair" class="kb-viz-pair gap-6 sm:col-start-2 sm:row-start-2 lg:col-auto lg:row-auto">
+        <section id="stepVizCard" class="flex h-full flex-col rounded-3xl border border-orange-100 bg-white p-5 shadow-lg shadow-orange-100/60 sm:p-6">
+          <div id="step3Wrap" class="kb-guide flex h-full flex-col">
+            <h3 class="font-display text-lg font-bold text-kripta-navy">4 · Visualização do decaimento</h3>
+            <p class="mt-1 text-xs text-stone-500">Perda de massa ativa (meia-vida), quadrado a quadrado.</p>
+
+            <!-- barra de massa (altura fixa, para alinhar com o gráfico ao lado) -->
+            <div class="mt-5 flex h-10 items-center gap-3">
+              <div class="w-full">
+                <div class="flex justify-between text-[11px] font-bold uppercase tracking-wide text-stone-500">
+                  <span>100%</span><span id="isotopeBarLabel">—</span><span>0%</span>
+                </div>
+                <div class="mt-1 h-4 w-full overflow-hidden rounded-full bg-stone-200">
+                  <div id="massBar" class="h-full rounded-full bg-gradient-to-r from-kripta-amber to-kripta-orange transition-all duration-200" style="width: 50%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- grade de átomos (9x9 no desktop/tablet / 5x5 no mobile) -->
+            <div id="atomGrid" class="mt-6 grid grow grid-cols-9 content-start gap-1 sm:gap-2 lg:gap-2.5"></div>
+
+            <!-- legenda (abaixo da grade, fora da área alinhada com o gráfico) -->
+            <p class="mb-1 mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold text-stone-700 sm:text-sm">
+              <span class="inline-block h-3 w-3 rounded-sm bg-gradient-to-br from-kripta-amber to-kripta-orange ring-1 ring-kripta-orange/50"></span>
+              Isótopo ativo
+              <span class="ml-3 inline-block h-3 w-3 rounded-sm border border-dashed border-stone-400/60"></span>
+              Já decaído (produto-filha)
+            </p>
+          </div>
+        </section>
+
+        <section id="stepCurveCard" class="flex h-full flex-col rounded-3xl border border-orange-100 bg-white p-5 shadow-lg shadow-orange-100/60 sm:p-6">
+          <div id="stepCurveWrap" class="kb-guide flex h-full flex-col">
+            <h3 class="font-display text-lg font-bold text-kripta-navy">5 · Gráfico do decaimento</h3>
+            <p class="mt-1 text-xs text-stone-500">Curva exponencial — N = N₀ · 0,5^(t/T½)</p>
+
+            <!-- espaço com a MESMA altura da barra de massa, para os gráficos ficarem alinhados -->
+            <div class="mt-5 flex h-10 items-center">
+              <p class="text-[11px] font-bold uppercase tracking-wide text-stone-500">Tempo vs. Massa Ativa</p>
+            </div>
+
+            <div id="curveBox" class="relative mt-6 min-h-48 grow sm:min-h-60 lg:max-h-64">
+              <svg viewBox="0 0 100 52" preserveAspectRatio="none" class="absolute inset-0 h-full w-full rounded-xl border border-orange-100 bg-gradient-to-b from-amber-50 to-orange-50" role="img" aria-label="Curva exponencial do decaimento radioativo">
+                <g id="curveGuides"></g>
+                <polyline id="curvePoints" points="" fill="none" stroke="#F97316" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                <circle id="curveMarker" cx="0" cy="0" r="2.4" fill="#C2410C" stroke="#FFFFFF" stroke-width="0.8"></circle>
+              </svg>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      </div>
+
+  </main>
+  </div>
 
   <!-- ============================================================
        FOOTER (laranja, texto branco)
@@ -382,7 +389,28 @@
         <img src="assets/KriptaBranco.png" alt="Logo Kripta" class="h-8 w-auto">
         <span class="font-display text-lg font-extrabold text-white">Kriptobioze</span>
       </div>
-      <button
+      <div class="flex items-center gap-1">
+        <a href="index.html" title="Front" aria-label="Página Front" class="rounded-lg p-2 text-white/80 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-kripta-amber">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+            <line x1="8" y1="20" x2="16" y2="20"></line>
+            <line x1="12" y1="16" x2="12" y2="20"></line>
+          </svg>
+        </a>
+        <a href="pages/backA.html" title="Back" aria-label="Página Back" class="rounded-lg p-2 text-white/80 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-kripta-amber">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </a>
+        <a href="pages/dataC.html" title="SQL" aria-label="Página SQL" class="rounded-lg p-2 text-white/80 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-kripta-amber">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+            <path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"></path>
+            <path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"></path>
+          </svg>
+        </a>
+        <button
         id="btnCloseDrawer"
         type="button"
         aria-label="Fechar menu"
@@ -393,6 +421,7 @@
           <line x1="5" y1="19" x2="19" y2="5"></line>
         </svg>
       </button>
+      </div>
     </div>
 
     <div class="space-y-4 px-5 py-6">
@@ -458,6 +487,37 @@
         });
       });
     }
+  </script>
+  <script>
+    /* Centro da navbar (mobile): mostra DinoBranco + "Kriptobioze" apenas
+       quando o hero (cena animada dos dinossauros) sai da visão ao rolar. */
+    (function () {
+      var hero = document.getElementById("hero");
+      var center = document.getElementById("navCenter");
+      if (!hero || !center) return;
+
+      function sync(visible) {
+        center.classList.toggle("nav-center-on", visible);
+      }
+
+      if ("IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            sync(!entry.isIntersecting);
+          });
+        }, { threshold: 0, rootMargin: "-64px 0px 0px 0px" });
+        io.observe(hero);
+      } else {
+        sync(false);
+        window.addEventListener(
+          "scroll",
+          function () {
+            sync(hero.getBoundingClientRect().bottom <= 64);
+          },
+          { passive: true }
+        );
+      }
+    })();
   </script>
 </body>
 </html>

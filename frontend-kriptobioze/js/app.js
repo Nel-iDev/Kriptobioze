@@ -139,7 +139,7 @@
   let estratigrafia = FALLBACK_ESTRATIGRAFIA.slice();
 
   const state = {
-    isotopeSymbol: "C-14",
+    isotopeSymbol: null,
     pct: 50,
     simYears: 0,
     running: false,
@@ -194,53 +194,90 @@
   }
 
   /* ============================================================
-     Interface: isótopos (seletor de entrada da Proposta B)
+     Interface: isótopos (mini cards estilo tabela periódica)
      ============================================================ */
   function renderIsotopeGroup() {
     const group = $("#isotopeGroup");
     group.innerHTML = "";
 
-    isotopes.forEach((iso, idx) => {
-      const label = document.createElement("label");
-      label.className =
-        "group cursor-pointer rounded-2xl border-2 border-transparent bg-stone-50 p-4 text-center " +
-        "transition-all hover:border-kripta-amber hover:shadow-md isotope-card";
-      label.dataset.symbol = iso.symbol;
+    isotopes.forEach((iso) => {
+      const parts = iso.symbol.split("-");
+      const letter = parts[0] || iso.symbol;
+      const mass = parts[1] || "";
 
-      label.innerHTML =
-        '<input type="radio" name="isotope" value="' + iso.symbol + '" class="sr-only">' +
-        '<span class="font-display block text-2xl font-extrabold text-kripta-orange">' + iso.symbol + "</span>" +
-        '<span class="block text-sm font-semibold text-stone-700">' + iso.name + "</span>" +
-        '<span class="mt-1 block text-xs text-stone-500">Meia-vida ~' + fmtYears(iso.halfLifeYears) + "</span>" +
-        '<span class="mt-2 inline-block rounded-full bg-kripta-amber/20 px-3 py-0.5 text-xs font-bold text-kripta-orange">' +
-        iso.range + "</span>";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "isotope-tile group relative aspect-square";
+      btn.dataset.symbol = iso.symbol;
+      btn.setAttribute("role", "radio");
+      btn.setAttribute("aria-checked", "false");
+      btn.setAttribute("aria-label", iso.name);
+      btn.title = iso.name + " · Meia-vida ~" + fmtYears(iso.halfLifeYears);
 
-      if (idx === 0) label.querySelector("input").checked = true;
+      btn.innerHTML =
+        '<span class="iso-num"></span>' +
+        '<span class="iso-sym absolute inset-0 flex items-center justify-center pb-0.5"></span>';
+      btn.querySelector(".iso-num").textContent = mass;
+      btn.querySelector(".iso-sym").textContent = letter;
 
-      label.querySelector("input").addEventListener("change", () => {
+      btn.addEventListener("click", () => {
         state.isotopeSymbol = iso.symbol;
         state.simYears = calcYearsFromPct(state.pct, iso.halfLifeYears);
         syncIsotopeCards();
         renderAll();
       });
 
-      group.appendChild(label);
+      group.appendChild(btn);
     });
 
     syncIsotopeCards();
   }
 
   function syncIsotopeCards() {
-    document.querySelectorAll("#isotopeGroup .isotope-card").forEach((card) => {
+    document.querySelectorAll("#isotopeGroup .isotope-tile").forEach((card) => {
       const on = card.dataset.symbol === state.isotopeSymbol;
-      card.classList.toggle("border-kripta-orange", on);
-      card.classList.toggle("bg-white", on);
-      card.classList.toggle("shadow-lg", on);
+      card.classList.toggle("iso-on", on);
+      card.setAttribute("aria-checked", on ? "true" : "false");
     });
+    updateInfoCard();
+    updateGuideVisibility();
   }
 
-  /* ---------- grid de átomos (representação visual) ---------- */
-  const ATOMS = 90;
+  function updateInfoCard() {
+    const el = $("#isotopeInfoText");
+    if (!el) return;
+    if (!state.isotopeSymbol) {
+      el.innerHTML =
+        '<span class="text-sm font-semibold italic text-stone-400">Selecione um dos isótopos</span>';
+      return;
+    }
+    const iso = isotopeOf(state.isotopeSymbol);
+    el.innerHTML =
+      '<span class="font-display text-base font-extrabold text-kripta-navy">' + iso.name + "</span>" +
+      '<span class="ml-2 text-sm font-semibold text-stone-500">Meia-vida ~' + fmtYears(iso.halfLifeYears) + "</span>";
+  }
+
+  function updateGuideVisibility() {
+    const on = !!state.isotopeSymbol;
+    const wrap2 = $("#step2Wrap");
+    const wrap3 = $("#step3Wrap");
+    const curve = $("#stepCurveWrap");
+    const leituras = $("#stepLeiturasWrap");
+    if (wrap2) wrap2.classList.toggle("kb-muted", !on);
+    if (wrap3) wrap3.classList.toggle("kb-muted", !on);
+    if (curve) curve.classList.toggle("kb-muted", !on);
+    if (leituras) leituras.classList.toggle("kb-muted", !on);
+  }
+
+  /* ---------- grid de átomos (9x9 em todas as telas) ---------- */
+  const ATOMS_FULL = 81;
+  const ATOMS_MOBILE = 81;
+  const isMobileView = () => window.matchMedia("(max-width: 639px)").matches;
+
+  function atomCount() {
+    return isMobileView() ? ATOMS_MOBILE : ATOMS_FULL;
+  }
+
   function atomSeed(i) {
     const x = Math.sin(i * 12.9898 + 4.1414) * 43758.5453;
     return x - Math.floor(x);
@@ -248,9 +285,10 @@
 
   function renderAtoms() {
     const grid = $("#atomGrid");
-    if (grid.childElementCount !== ATOMS) {
+    const total = atomCount();
+    if (grid.childElementCount !== total) {
       grid.innerHTML = "";
-      for (let i = 0; i < ATOMS; i++) {
+      for (let i = 0; i < total; i++) {
         const cell = document.createElement("div");
         cell.className = "atom";
         cell.setAttribute("aria-hidden", "true");
@@ -268,7 +306,7 @@
   /* ---------- curva de decaimento exponencial (SVG) ---------- */
   const MAX_HALF_LIVES = 6;
 
-  function buildCurve() {
+  function drawCurve(viewH, guidesEl, pointsEl, markerEl) {
     const iso = isotopeOf(state.isotopeSymbol);
     const halfLife = iso.halfLifeYears;
     const maxYears = halfLife * MAX_HALF_LIVES;
@@ -278,30 +316,57 @@
     for (let i = 0; i <= 120; i++) {
       const t = (i / 120) * maxYears;
       const rem = Math.pow(0.5, t / halfLife);
-      points.push((i / 120) * 100 + "," + (5 + (1 - rem) * 42).toFixed(2));
+      points.push((i / 120) * 100 + "," + (5 + (1 - rem) * (viewH - 10)).toFixed(2));
     }
 
     const remNow = Math.pow(0.5, years / halfLife);
     const curX = (years / maxYears) * 100;
-    const curY = 5 + (1 - remNow) * 42;
+    const curY = 5 + (1 - remNow) * (viewH - 10);
 
-    $("#curvePoints").setAttribute("points", points.join(" "));
-    $("#curveMarker").setAttribute("cx", curX.toFixed(2));
-    $("#curveMarker").setAttribute("cy", curY.toFixed(2));
+    pointsEl.setAttribute("points", points.join(" "));
+    markerEl.setAttribute("cx", curX.toFixed(2));
+    markerEl.setAttribute("cy", curY.toFixed(2));
 
     // linhas-guia horizontais: 50% e 25% da massa restante
-    const guide = $("#curveGuides");
-    const g50 = 5 + (1 - 0.5) * 42;
-    const g25 = 5 + (1 - 0.25) * 42;
-    guide.innerHTML =
+    const g50 = 5 + (1 - 0.5) * (viewH - 10);
+    const g25 = 5 + (1 - 0.25) * (viewH - 10);
+    guidesEl.innerHTML =
       '<line x1="0" y1="' + g50 + '" x2="100" y2="' + g50 + '" stroke="#f59e0b" stroke-width="0.35" stroke-dasharray="3 3" opacity="0.55"/>' +
       '<text x="100" y="' + (g50 - 2) + '" text-anchor="end" font-size="3" fill="#b45309" font-family="inherit">50%</text>' +
       '<line x1="0" y1="' + g25 + '" x2="100" y2="' + g25 + '" stroke="#f59e0b" stroke-width="0.35" stroke-dasharray="3 3" opacity="0.55"/>' +
       '<text x="100" y="' + (g25 - 2) + '" text-anchor="end" font-size="3" fill="#b45309" font-family="inherit">25%</text>';
   }
 
+  function buildCurve() {
+    // curva única dentro da visualização (viewBox 100x52)
+    drawCurve(52, $("#curveGuides"), $("#curvePoints"), $("#curveMarker"));
+  }
+
   /* ---------- leituras + barra de massa ---------- */
   function renderReadouts() {
+    if (!state.isotopeSymbol) {
+      const age = $("#ageOut");
+      if (age) age.textContent = "—";
+      const era = $("#eraOut");
+      if (era) {
+        era.textContent = "—";
+        era.title = "";
+      }
+      const hl = $("#hlOut");
+      if (hl) hl.textContent = "—";
+      const time = $("#timeOut");
+      if (time) time.textContent = "—";
+      const pct = $("#pctOut");
+      if (pct) pct.textContent = "—";
+      const bar = $("#massBar");
+      if (bar) bar.style.width = "0%";
+      const name = $("#isotopeName");
+      if (name) name.textContent = "Nenhum isótopo selecionado";
+      const label = $("#isotopeBarLabel");
+      if (label) label.textContent = "—";
+      return;
+    }
+
     const iso = isotopeOf(state.isotopeSymbol);
     const halfLife = iso.halfLifeYears;
     const halfLives = state.pct < 100 ? Math.log2(100 / state.pct) : 0;
@@ -320,21 +385,6 @@
 
     const isoName = $("#isotopeName");
     if (isoName) isoName.textContent = iso.name + " (" + iso.symbol + ")";
-  }
-
-  /* ---------- status da fonte de dados ---------- */
-  function updateStatus() {
-    const pill = $("#apiStatus");
-    if (!pill) return;
-    if (apiMode === "api") {
-      pill.textContent = "Dados conectados ao backend (API)";
-      pill.className =
-        "inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700";
-    } else {
-      pill.textContent = "Modo local (front) — backend desligado";
-      pill.className =
-        "inline-flex items-center gap-1.5 rounded-full bg-kripta-amber/20 px-3 py-1 text-xs font-bold text-stone-600";
-    }
   }
 
   function renderAll() {
@@ -380,9 +430,10 @@
   /* ---------- controles: simular / resetar ---------- */
   function startSim() {
     if (state.running) return;
+    if (!state.isotopeSymbol) return; // sem isótopo selecionado, não simula
     state.running = true;
     state.started = true;
-    $("#btnPlay").textContent = "⏸ Pausar simulação";
+    $("#btnPlay").textContent = "⏸";
     $("#btnPlay").classList.remove("bg-kripta-navy");
     $("#btnPlay").classList.add("bg-pink-600");
     state.timer = setInterval(tick, 60);
@@ -392,7 +443,7 @@
     state.running = false;
     clearInterval(state.timer);
     state.timer = null;
-    $("#btnPlay").textContent = "▶ Simular decaimento";
+    $("#btnPlay").textContent = "▶";
     $("#btnPlay").classList.add("bg-kripta-navy");
     $("#btnPlay").classList.remove("bg-pink-600");
   }
@@ -463,6 +514,44 @@
   );
   $("#btnReset").addEventListener("click", resetSim);
 
+  /* ---------- controles flutuantes: torre play/reset fixa à direita ---------- */
+  const NAV_OFFSET = 80; // 64px do menu fixo + folga
+
+  function placeFloatingControls() {
+    const tower = $("#controlsTower");
+    const card1 = $("#step1Card");
+    if (!tower || !card1) return;
+
+    const vh = window.innerHeight;
+    const card1Top = card1.getBoundingClientRect().top;
+
+    // hero ainda dominando a tela: torre fica escondida
+    if (card1Top >= vh) {
+      tower.classList.add("kb-controls--off");
+      return;
+    }
+    tower.classList.remove("kb-controls--off");
+
+    const footer = document.querySelector("footer");
+    const footerTop = footer ? footer.getBoundingClientRect().top : Infinity;
+    const towerH = tower.offsetHeight;
+
+    // assim que o topo do rodapé entra na tela, a torre "para" pouco acima dele
+    if (footerTop - FOOTER_BREAK <= vh) {
+      tower.style.top = Math.max(NAV_OFFSET, footerTop - towerH - FOOTER_BREAK) + "px";
+    } else {
+      // alinhada ao card 1 enquanto visível; depois segue fixa abaixo do menu
+      tower.style.top = Math.max(NAV_OFFSET, card1Top) + "px";
+    }
+  }
+
+  window.addEventListener("scroll", placeFloatingControls, { passive: true });
+
+  window.addEventListener("resize", () => {
+    renderAtoms();
+    placeFloatingControls();
+  });
+
   /* ============================================================
      Boot: tenta carregar os isótopos do backend (fallback local)
      ============================================================ */
@@ -470,7 +559,6 @@
     renderIsotopeGroup();
     renderEstratigrafia();
     renderAll();
-    updateStatus();
 
     try {
       const list = await KB.getIsotopes();
@@ -504,8 +592,8 @@
       /* sem API: mantém o fallback local */
     }
 
-    updateStatus();
     renderEstratigrafia();
+    placeFloatingControls();
   }
 
   boot();
