@@ -449,25 +449,25 @@ Frontend: NÃO há UI para exibir este resultado (endpoint disponível mas sem i
 
 ---
 
-## 8. Matriz de Integração
+## 8. Matriz de Integração (atualizada — Sprint 3)
 
 | Funcionalidade | Front-end (função) | Endpoint | Controller | Service | Repository | Banco | Status |
 |----------------|---------------------|----------|------------|---------|------------|-------|--------|
 | Listar isótopos | `KB.getIsotopes()` → `renderIsotopeGroup()` | `GET /api/radioactive-decay/isotopes` | `RadioactiveDecayController.getAllIsotopes()` | `RadioactiveDecayService.getAllIsotopes()` | `IsotopeRepository.findAll()` | `isotopes` | **Integrado** |
-| Calcular decaimento | `KB.calculateDecay()` (disponível, não usado no UI) | `POST /api/radioactive-decay/calculate` | `RadioactiveDecayController.calculateDecay()` | `RadioactiveDecayService.calculateDecay()` | `IsotopeRepository.findBySymbol()` | `isotopes` | **Sem UI** |
-| Calcular Darwin | `KB.calculateDarwin()` (disponível, não usado no UI) | `POST /api/darwin/calculate` | `DarwinController.calculate()` | `DarwinCalculationService.calculateTimeToAltitude()` | Nenhum | Nenhum | **Sem UI** |
+| Calcular decaimento | `KB.validateDecay()` → `#apiDecayBadge` | `POST /api/radioactive-decay/calculate` | `RadioactiveDecayController.calculateDecay()` | `RadioactiveDecayService.calculateDecay()` | `IsotopeRepository.findBySymbol()` | `isotopes` | **Integrado** |
+| Calcular Darwin | `KB.calculateDarwinUI()` → `#darwinResult` | `POST /api/darwin/calculate` | `DarwinController.calculate()` | `DarwinCalculationService.calculateTimeToAltitude()` | Nenhum | Nenhum | **Integrado** |
 | Estratigrafia | `KB.getEstratigrafia()` → `renderEstratigrafia()` | `GET /api/fossils/estratigrafia` | `FossilController.getEstratigrafia()` | `FossilService.getEstratigrafia()` | `FossilRepository.findAllEstratigrafiaOrderByProfundidadeDesc()` | `fossil` + `camada` (INNER JOIN) | **Integrado** |
-| Listar fósseis | `KB.getFossils()` (disponível, não usado no UI) | `GET /api/fossils` | `FossilController.getAllFossils()` | `FossilService.getAllFossils()` | `FossilRepository.findAll()` | `fossil` | **Sem UI** |
-| Listar camadas | `KB.getLayers()` (disponível, não usado no UI) | `GET /api/layers` | `FossilController.getAllLayers()` | `FossilService.getAllLayers()` | `CamadaRepository.findAll()` | `camada` | **Sem UI** |
-| Buscar fóssil por ID | Não disponível no front | `GET /api/fossils/{id}` | `FossilController.getFossilById()` | `FossilService.getFossilById()` | `FossilRepository.findById()` | `fossil` | **Sem UI** |
-| Buscar fósseis por camada | Não disponível no front | `GET /api/fossils/layer/{layerId}` | `FossilController.getFossilsByLayer()` | `FossilService.getFossilsByLayer()` | `FossilRepository.findByCamadaId()` | `fossil` | **Sem UI** |
-| Criar fóssil | Não disponível no front | `POST /api/fossils` | `FossilController.createFossil()` | `FossilService.createFossil()` | `FossilRepository.save()` | `fossil` | **Sem UI** |
-| Atualizar fóssil | Não disponível no front | `PUT /api/fossils/{id}` | `FossilController.updateFossil()` | `FossilService.updateFossil()` | `FossilRepository.findById()` + `save()` | `fossil` | **Sem UI** |
-| Remover fóssil | Não disponível no front | `DELETE /api/fossils/{id}` | `FossilController.deleteFossil()` | `FossilService.deleteFossil()` | `FossilRepository.deleteById()` | `fossil` | **Sem UI** |
-| Criar camada | Não disponível no front | `POST /api/layers` | `FossilController.createLayer()` | `FossilService.createLayer()` | `CamadaRepository.save()` | `camada` | **Sem UI** |
-| Atualizar camada | Não disponível no front | `PUT /api/layers/{id}` | `FossilController.updateLayer()` | `FossilService.updateLayer()` | `CamadaRepository.findById()` + `save()` | `camada` | **Sem UI** |
-| Remover camada | Não disponível no front | `DELETE /api/layers/{id}` | `FossilController.deleteLayer()` | `FossilService.deleteLayer()` | `CamadaRepository.deleteById()` | `camada` | **Sem UI** |
-| Simulador decaimento | `renderAll()` (cálculo local) | Nenhum (offline) | Nenhum | Nenhum | Nenhum | Nenhum | **Somente local** |
+| Listar fósseis | `KB.loadFossils()` → `renderFossilsTable()` | `GET /api/fossils` | `FossilController.getAllFossils()` | `FossilService.getAllFossils()` | `FossilRepository.findAll()` | `fossil` | **Integrado** |
+| Listar camadas | `KB.loadLayers()` → `renderLayersTable()` | `GET /api/layers` | `FossilController.getAllLayers()` | `FossilService.getAllLayers()` | `CamadaRepository.findAll()` | `camada` | **Integrado** |
+| Buscar fóssil por ID | `KB.searchFossilById()` → `#fossilSearchResult` | `GET /api/fossils/{id}` | `FossilController.getFossilById()` | `FossilService.getFossilById()` | `FossilRepository.findById()` | `fossil` | **Integrado** |
+| Buscar fósseis por camada | `KB.searchFossilsByLayer()` → `#fossilLayerSearchResult` | `GET /api/fossils/layer/{layerId}` | `FossilController.getFossilsByLayer()` | `FossilService.getFossilsByLayer()` | `FossilRepository.findByCamadaId()` | `fossil` | **Integrado** |
+| Criar fóssil | `KB.createFossil()` → formulário | `POST /api/fossils` | `FossilController.createFossil()` | `FossilService.createFossil()` | `FossilRepository.save()` | `fossil` | **Integrado** |
+| Atualizar fóssil | `KB.updateFossil()` → formulário | `PUT /api/fossils/{id}` | `FossilController.updateFossil()` | `FossilService.updateFossil()` | `FossilRepository.findById()` + `save()` | `fossil` | **Integrado** |
+| Remover fóssil | `KB.deleteFossil()` → botão excluir | `DELETE /api/fossils/{id}` | `FossilController.deleteFossil()` | `FossilService.deleteFossil()` | `FossilRepository.deleteById()` | `fossil` | **Integrado** |
+| Criar camada | `KB.createLayer()` → formulário | `POST /api/layers` | `FossilController.createLayer()` | `FossilService.createLayer()` | `CamadaRepository.save()` | `camada` | **Integrado** |
+| Atualizar camada | `KB.updateLayer()` → formulário | `PUT /api/layers/{id}` | `FossilController.updateLayer()` | `FossilService.updateLayer()` | `CamadaRepository.findById()` + `save()` | `camada` | **Integrado** |
+| Remover camada | `KB.deleteLayer()` → botão excluir | `DELETE /api/layers/{id}` | `FossilController.deleteLayer()` | `FossilService.deleteLayer()` | `CamadaRepository.deleteById()` | `camada` | **Integrado** |
+| Simulador decaimento | `renderAll()` (cálculo local) + `KB.validateDecay()` (API) | `POST /api/radioactive-decay/calculate` (validação) | `RadioactiveDecayController.calculateDecay()` | `RadioactiveDecayService.calculateDecay()` | `IsotopeRepository.findBySymbol()` | `isotopes` | **Integrado** |
 
 ---
 

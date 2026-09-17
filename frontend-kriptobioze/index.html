@@ -234,6 +234,19 @@
           >
             ↺ Resetar
           </button>
+          <button
+            id="btnValidateDecay"
+            type="button"
+            onclick="KB.validateDecay()"
+            class="rounded-xl border border-kripta-aqua bg-teal-50 px-5 py-2.5 text-sm font-bold text-teal-700 transition hover:bg-teal-100 active:scale-95"
+          >
+            ✓ Validar via API
+          </button>
+        </div>
+        <div class="mt-2">
+          <span id="apiDecayBadge" class="inline-flex items-center gap-1 rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-bold text-stone-400">
+            Clique em "Validar via API" para consultar o backend
+          </span>
         </div>
       </section>
 
@@ -278,21 +291,16 @@
 
     <!-- nota de integração -->
     <div class="mt-8 rounded-2xl border border-orange-200 bg-orange-50 p-5 text-sm text-stone-600">
-      <p class="font-bold text-kripta-orange">Integração com o backend (Prontos para conectar)</p>
+      <p class="font-bold text-kripta-orange">Integração com o backend (Sprint 3)</p>
       <p class="mt-1">
-        Este painel consome os endpoints já existentes no projeto Spring Boot:
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs text-stone-700">/api/radioactive-decay/isotopes</code> e
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs text-stone-700">/api/radioactive-decay/calculate</code>.
-        Basta servir esta pasta como estática (por ex.: em <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">src/main/resources/static</code>)
-        e definir <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">window.KB_API_BASE</code> com a URL da API.
-        O objeto global <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">window.KB</code> também expõe
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">calculateDecay</code>,
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">calculateDarwin</code>,
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getFossils</code>,
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getLayers</code> e
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">getEstratigrafia</code>
-        (este último alimenta a tabela de estratigrafia abaixo via
-        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">GET /api/fossils/estratigrafia</code>).
+        Este painel consome os endpoints do Spring Boot via
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs text-stone-700">window.KB_API_BASE</code>
+        (configurado como <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs">http://localhost:8080</code>).
+        O botão "Validar via API" consulta
+        <code class="rounded bg-white px-1.5 py-0.5 font-mono text-xs text-stone-700">POST /api/radioactive-decay/calculate</code>
+        para confirmar o cálculo de decaimento no backend.
+        Se a API estiver indisponível, o simulador continua funcionando em modo local.
+        Abaixo há também seções para Darwin, fósseis, camadas e CRUD completo.
       </p>
     </div>
   </main>
@@ -341,6 +349,249 @@
         ⬆ Mais profundo = mais antigo · ⬇ Mais raso = mais recente. Dataset do DataSeeder
         (<code class="font-mono">database/02_dados_iniciais.sql</code>).
       </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CÁLCULO DARWIN — Cálculo de tempo para atingir altitude
+       ============================================================ -->
+  <section id="darwin" class="mx-auto max-w-7xl scroll-mt-20 px-4 py-10 sm:py-14">
+    <div class="mb-8">
+      <p class="font-display text-sm font-bold uppercase tracking-widest text-kripta-orange">Cálculo Darwin</p>
+      <h2 class="font-display mt-1 text-3xl font-extrabold text-kripta-navy sm:text-4xl">
+        Tempo para atingir uma altitude
+      </h2>
+      <p class="mt-2 max-w-2xl text-sm text-stone-600 sm:text-base">
+        Baseado nas observações de Darwin no Chile (1835): quanto tempo levaria para uma área
+        atingir determinada altitude, dado uma taxa de soerguimento?
+      </p>
+    </div>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <section class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+        <h3 class="font-display text-lg font-bold text-kripta-navy">Parâmetros de entrada</h3>
+        <div class="mt-4 space-y-4">
+          <div>
+            <label class="text-sm font-bold text-stone-700" for="darwinAltitude">Altitude desejada (metros)</label>
+            <input id="darwinAltitude" type="number" min="1" value="2800" class="mt-1 w-full rounded-xl border border-stone-300 px-4 py-2.5 text-sm focus:border-kripta-orange focus:outline-none focus:ring-2 focus:ring-kripta-orange/30">
+          </div>
+          <div>
+            <label class="text-sm font-bold text-stone-700" for="darwinRate">Taxa de soerguimento (cm/século)</label>
+            <input id="darwinRate" type="number" min="0.01" step="0.1" value="2" class="mt-1 w-full rounded-xl border border-stone-300 px-4 py-2.5 text-sm focus:border-kripta-orange focus:outline-none focus:ring-2 focus:ring-kripta-orange/30">
+          </div>
+          <button
+            type="button"
+            onclick="KB.calculateDarwinUI()"
+            class="rounded-xl bg-kripta-orange px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-orange-600 active:scale-95"
+          >
+            Calcular via API
+          </button>
+        </div>
+      </section>
+      <section class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+        <h3 class="font-display text-lg font-bold text-kripta-navy">Resultado</h3>
+        <div id="darwinResult" class="mt-4">
+          <p class="text-stone-400 text-sm">Insira os parâmetros e clique em "Calcular via API".</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FÓSSEIS — Consulta e CRUD
+       ============================================================ -->
+  <section id="fossils" class="mx-auto max-w-7xl scroll-mt-20 px-4 py-10 sm:py-14">
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="font-display text-sm font-bold uppercase tracking-widest text-kripta-orange">Cadastro de Fósseis</p>
+        <h2 class="font-display mt-1 text-3xl font-extrabold text-kripta-navy sm:text-4xl">
+          Fósseis
+        </h2>
+        <p class="mt-2 max-w-2xl text-sm text-stone-600 sm:text-base">
+          Consulta, criação, edição e exclusão de fósseis via API REST.
+        </p>
+      </div>
+      <button onclick="KB.loadFossils()" class="rounded-xl bg-kripta-navy px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-black/85 active:scale-95">
+        ↻ Carregar fósseis
+      </button>
+    </div>
+
+    <div class="overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-lg shadow-orange-100/60">
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[720px] text-left text-sm">
+          <thead class="bg-kripta-navy text-white">
+            <tr>
+              <th class="px-5 py-3.5 font-bold">ID</th>
+              <th class="px-5 py-3.5 font-bold">Nome científico</th>
+              <th class="px-5 py-3.5 font-bold">Taxonomia</th>
+              <th class="px-5 py-3.5 font-bold">Idade estimada</th>
+              <th class="px-5 py-3.5 font-bold">Camada</th>
+              <th class="px-5 py-3.5 font-bold">Localidade</th>
+            </tr>
+          </thead>
+          <tbody id="fossilsBody">
+            <tr><td colspan="6" class="px-4 py-6 text-center text-stone-400 text-sm">Clique em "Carregar fósseis" para consultar a API.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="fossilsNote" class="border-t border-orange-100 bg-orange-50 px-5 py-3 text-xs text-stone-500">
+        Aguardando consulta à API…
+      </p>
+    </div>
+
+    <!-- Busca por ID -->
+    <div class="mt-6 grid gap-6 lg:grid-cols-3">
+      <div class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+        <h3 class="font-display text-base font-bold text-kripta-navy">Buscar fóssil por ID</h3>
+        <div class="mt-3 flex gap-2">
+          <input id="fossilSearchId" type="number" min="1" placeholder="ID" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <button onclick="KB.searchFossilById()" class="rounded-xl bg-kripta-orange px-4 py-2 text-sm font-bold text-white transition hover:bg-orange-600">Buscar</button>
+        </div>
+        <div id="fossilSearchResult" class="mt-3"></div>
+      </div>
+
+      <!-- Busca de fósseis por camada -->
+      <div class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+        <h3 class="font-display text-base font-bold text-kripta-navy">Fósseis por camada</h3>
+        <div class="mt-3 flex gap-2">
+          <input id="fossilLayerSearchId" type="number" min="1" placeholder="ID da camada" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <button onclick="KB.searchFossilsByLayer()" class="rounded-xl bg-kripta-orange px-4 py-2 text-sm font-bold text-white transition hover:bg-orange-600">Buscar</button>
+        </div>
+        <div id="fossilLayerSearchResult" class="mt-3"></div>
+      </div>
+
+      <!-- CRUD: Criar fóssil -->
+      <div class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+        <h3 class="font-display text-base font-bold text-kripta-navy">Criar fóssil</h3>
+        <div class="mt-3 space-y-2">
+          <input id="crFossilNome" type="text" placeholder="Nome científico" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="crFossilTaxo" type="text" placeholder="Taxonomia" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="crFossilIdade" type="number" step="0.01" placeholder="Idade estimada (Ma)" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="crFossilLocal" type="text" placeholder="Localidade" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="crFossilDesc" type="text" placeholder="Descrição" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="crFossilCamada" type="number" min="1" placeholder="ID da camada" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <button onclick="KB.createFossil()" class="w-full rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-emerald-700">Criar</button>
+        </div>
+        <div id="crFossilMsg" class="mt-2"></div>
+      </div>
+    </div>
+
+    <!-- CRUD: Editar e Excluir fóssil -->
+    <div class="mt-6 grid gap-6 lg:grid-cols-2">
+      <div class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+        <h3 class="font-display text-base font-bold text-kripta-navy">Editar fóssil</h3>
+        <div class="mt-3 space-y-2">
+          <input id="upFossilId" type="number" min="1" placeholder="ID do fóssil" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="upFossilNome" type="text" placeholder="Nome científico" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="upFossilTaxo" type="text" placeholder="Taxonomia" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="upFossilIdade" type="number" step="0.01" placeholder="Idade estimada (Ma)" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="upFossilLocal" type="text" placeholder="Localidade" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="upFossilDesc" type="text" placeholder="Descrição" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="upFossilCamada" type="number" min="1" placeholder="ID da camada" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <button onclick="KB.updateFossil()" class="w-full rounded-xl bg-amber-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-amber-600">Atualizar</button>
+        </div>
+        <div id="upFossilMsg" class="mt-2"></div>
+      </div>
+
+      <div class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+        <h3 class="font-display text-base font-bold text-kripta-navy">Excluir fóssil</h3>
+        <div class="mt-3 flex gap-2">
+          <input id="delFossilId" type="number" min="1" placeholder="ID do fóssil" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <button onclick="KB.deleteFossil()" class="rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-700">Excluir</button>
+        </div>
+        <div id="delFossilMsg" class="mt-2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CAMADAS — Consulta e CRUD
+       ============================================================ -->
+  <section id="layers" class="mx-auto max-w-7xl scroll-mt-20 px-4 py-10 sm:py-14">
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="font-display text-sm font-bold uppercase tracking-widest text-kripta-orange">Cadastro de Camadas</p>
+        <h2 class="font-display mt-1 text-3xl font-extrabold text-kripta-navy sm:text-4xl">
+          Camadas Geológicas
+        </h2>
+        <p class="mt-2 max-w-2xl text-sm text-stone-600 sm:text-base">
+          Consulta, criação, edição e exclusão de camadas geológicas via API REST.
+        </p>
+      </div>
+      <button onclick="KB.loadLayers()" class="rounded-xl bg-kripta-navy px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-black/85 active:scale-95">
+        ↻ Carregar camadas
+      </button>
+    </div>
+
+    <div class="overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-lg shadow-orange-100/60">
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[640px] text-left text-sm">
+          <thead class="bg-kripta-navy text-white">
+            <tr>
+              <th class="px-5 py-3.5 font-bold">ID</th>
+              <th class="px-5 py-3.5 font-bold">Era</th>
+              <th class="px-5 py-3.5 font-bold">Profundidade média</th>
+              <th class="px-5 py-3.5 font-bold">Tipo de rocha</th>
+              <th class="px-5 py-3.5 font-bold">Idade estimada</th>
+            </tr>
+          </thead>
+          <tbody id="layersBody">
+            <tr><td colspan="5" class="px-4 py-6 text-center text-stone-400 text-sm">Clique em "Carregar camadas" para consultar a API.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="layersNote" class="border-t border-orange-100 bg-orange-50 px-5 py-3 text-xs text-stone-500">
+        Aguardando consulta à API…
+      </p>
+    </div>
+
+    <!-- Busca por ID + CRUD -->
+    <div class="mt-6 grid gap-6 lg:grid-cols-3">
+      <div class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+        <h3 class="font-display text-base font-bold text-kripta-navy">Buscar camada por ID</h3>
+        <div class="mt-3 flex gap-2">
+          <input id="layerSearchId" type="number" min="1" placeholder="ID" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <button onclick="KB.searchLayerById()" class="rounded-xl bg-kripta-orange px-4 py-2 text-sm font-bold text-white transition hover:bg-orange-600">Buscar</button>
+        </div>
+        <div id="layerSearchResult" class="mt-3"></div>
+      </div>
+
+      <div class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+        <h3 class="font-display text-base font-bold text-kripta-navy">Criar camada</h3>
+        <div class="mt-3 space-y-2">
+          <input id="crLayerNome" type="text" placeholder="Nome da era" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="crLayerProf" type="number" step="0.1" placeholder="Profundidade (m)" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="crLayerRocha" type="text" placeholder="Tipo de rocha" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="crLayerIdade" type="number" placeholder="Idade (Ma)" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <input id="crLayerDesc" type="text" placeholder="Descrição" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+          <button onclick="KB.createLayer()" class="w-full rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-emerald-700">Criar</button>
+        </div>
+        <div id="crLayerMsg" class="mt-2"></div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+          <h3 class="font-display text-base font-bold text-kripta-navy">Editar camada</h3>
+          <div class="mt-3 space-y-2">
+            <input id="upLayerId" type="number" min="1" placeholder="ID da camada" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+            <input id="upLayerNome" type="text" placeholder="Nome da era" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+            <input id="upLayerProf" type="number" step="0.1" placeholder="Profundidade (m)" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+            <input id="upLayerRocha" type="text" placeholder="Tipo de rocha" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+            <input id="upLayerIdade" type="number" placeholder="Idade (Ma)" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+            <input id="upLayerDesc" type="text" placeholder="Descrição" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+            <button onclick="KB.updateLayer()" class="w-full rounded-xl bg-amber-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-amber-600">Atualizar</button>
+          </div>
+          <div id="upLayerMsg" class="mt-2"></div>
+        </div>
+
+        <div class="rounded-3xl border border-orange-100 bg-white p-6 shadow-lg shadow-orange-100/60">
+          <h3 class="font-display text-base font-bold text-kripta-navy">Excluir camada</h3>
+          <div class="mt-3 flex gap-2">
+            <input id="delLayerId" type="number" min="1" placeholder="ID da camada" class="w-full rounded-xl border border-stone-300 px-3 py-2 text-sm focus:border-kripta-orange focus:outline-none">
+            <button onclick="KB.deleteLayer()" class="rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-700">Excluir</button>
+          </div>
+          <div id="delLayerMsg" class="mt-2"></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -447,8 +698,7 @@
     </div>
   </aside>
 
-  <!-- Script: para conectar ao backend, defina antes do load:
-       <script>window.KB_API_BASE = "http://localhost:8080"</script> -->
+  <script>window.KB_API_BASE = "http://localhost:8080";</script>
   <script src="js/app.js"></script>
   <script>
     if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {

@@ -243,8 +243,8 @@ CAMADA (1) ──────────── (N) FOSSIL
 
 | Arquivo | Conteúdo |
 |---------|----------|
-| `database/01_schema.sql` | DDL: CREATE TABLE com PK, FK e índice |
-| `database/02_dados_iniciais.sql` | DML: 5 camadas + 6 fósseis de demonstração |
+| `database/01_schema.sql` | DDL: CREATE TABLE com PK, FK, índice + tabela isotopes |
+| `database/02_dados_iniciais.sql` | DML: 6 isótopos + 5 camadas + 6 fósseis de demonstração |
 | `database/03_consultas.sql` | DQL: INNER JOIN, LEFT JOIN + GROUP BY, RANK window function |
 
 ### Consultas Relevantes
@@ -329,9 +329,12 @@ ORDER BY c.profundidade_media DESC;
 Arquivo `src/main/resources/application.properties`:
 ```properties
 server.port=8080
-spring.datasource.url=jdbc:postgresql://localhost:5432/kriptobioze
-spring.datasource.username=postgres
-spring.datasource.password=postgres
+
+# Credenciais via variáveis de ambiente (fallback: valores locais)
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/kriptobioze}
+spring.datasource.username=${DB_USER:postgres}
+spring.datasource.password=${DB_PASSWORD:postgres}
+
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
@@ -425,29 +428,25 @@ A função `renderEstratigrafia()` renderiza a tabela dinamicamente:
 
 ## 8. Integração Atual entre as Camadas
 
-### Conectado
+### Conectado (Sprint 3)
 
 | Componente | Status | Detalhes |
 |------------|--------|----------|
 | Frontend → Backend (isótopos) | Funcional | `KB.getIsotopes()` consome `/api/radioactive-decay/isotopes` |
 | Frontend → Backend (estratigrafia) | Funcional | `KB.getEstratigrafia()` consome `/api/fossils/estratigrafia` |
+| Frontend → Backend (decaimento) | Funcional | `KB.validateDecay()` consome `/api/radioactive-decay/calculate` |
+| Frontend → Backend (Darwin) | Funcional | `KB.calculateDarwinUI()` consome `/api/darwin/calculate` |
+| Frontend → Backend (fósseis CRUD) | Funcional | `KB.loadFossils()`, `KB.createFossil()`, etc. |
+| Frontend → Backend (camadas CRUD) | Funcional | `KB.loadLayers()`, `KB.createLayer()`, etc. |
 | Backend → PostgreSQL | Funcional | JPA/Hibernate com `ddl-auto=update` |
 | DataSeeder → PostgreSQL | Funcional | Popula dados na primeira execução |
-
-### Disponível mas não utilizado no UI
-
-| Componente | Status | Detalhes |
-|------------|--------|----------|
-| `KB.calculateDecay()` | Disponível | Endpoint `POST /api/radioactive-decay/calculate` |
-| `KB.calculateDarwin()` | Disponível | Endpoint `POST /api/darwin/calculate` |
-| `KB.getFossils()` | Disponível | Endpoint `GET /api/fossils` |
-| `KB.getLayers()` | Disponível | Endpoint `GET /api/layers` |
+| Credenciais flexíveis | Funcional | Variáveis de ambiente com fallback |
 
 ### Pontos ainda não integrados
 
-1. **Simulador de decaimento radioativo**: O frontend calcula localmente (fórmula matemática). O endpoint `POST /api/radioactive-decay/calculate` existe mas não é chamado pelo simulador durante a animação.
-2. **Cálculo de Darwin**: O endpoint `POST /api/darwin/calculate` existe mas não há interface visual para ele no frontend.
-3. **CRUD de fósseis/camadas**: Os endpoints CRUD existem mas não há formulários de administração no frontend.
+1. **Autenticação**: API aberta com CORS `*` (sem autenticação)
+2. **Testes automatizados**: Sem testes unitários ou de integração
+3. **Paginação**: Listagens retornam todos os registros
 
 ---
 
@@ -469,13 +468,20 @@ CREATE DATABASE kriptobioze;
 
 ### Configuração do PostgreSQL
 
-1. Verifique as credenciais em `src/main/resources/application.properties`:
-   - Usuário padrão: `postgres`
-   - Senha padrão: `postgres`
+1. Verifique as configurações em `src/main/resources/application.properties`:
+   - As credenciais usam **variáveis de ambiente** com fallback para valores locais:
+     - `DB_URL`: URL de conexão (padrão: `jdbc:postgresql://localhost:5432/kriptobioze`)
+     - `DB_USER`: Usuário (padrão: `postgres`)
+     - `DB_PASSWORD`: Senha (padrão: `postgres`)
    - Porta: `5432`
    - Banco: `kriptobioze`
 
-2. Ajuste conforme necessário.
+2. Para produção, defina as variáveis de ambiente:
+   ```bash
+   export DB_URL=jdbc:postgresql://seu-servidor:5432/kriptobioze
+   export DB_USER=seu_usuario
+   export DB_PASSWORD=sua_senha
+   ```
 
 ### Execução do Back-end
 
@@ -512,16 +518,13 @@ npx http-server frontend-kriptobioze -p 5500
 
 ### Conexão Frontend ↔ Backend
 
-Para conectar o frontend ao backend, defina `window.KB_API_BASE` **antes** do carregamento do `app.js`:
+O `index.html` já define `window.KB_API_BASE = "http://localhost:8080"` antes do carregamento do `app.js`. O frontend tenta usar a API automaticamente.
 
+Se a API estiver indisponível, o frontend opera em **modo local** com dados fallback.
+
+Para alterar a URL da API, edite o script tag em `index.html`:
 ```html
 <script>window.KB_API_BASE = "http://localhost:8080";</script>
-<script src="js/app.js"></script>
-```
-
-Ou defina no console do navegador antes do page load:
-```javascript
-window.KB_API_BASE = "http://localhost:8080";
 ```
 
 ### URLs Utilizadas
@@ -706,13 +709,20 @@ window.KB_API_BASE = "http://localhost:8080";
 | Endpoint | Método | Status Frontend |
 |----------|--------|-----------------|
 | `/api/radioactive-decay/isotopes` | GET | Consumido por `KB.getIsotopes()` |
-| `/api/radioactive-decay/calculate` | POST | Disponível mas não usado no UI |
-| `/api/darwin/calculate` | POST | Disponível mas não usado no UI |
-| `/api/fossils` | GET | Disponível mas não usado no UI |
+| `/api/radioactive-decay/calculate` | POST | Consumido por `KB.validateDecay()` |
+| `/api/darwin/calculate` | POST | Consumido por `KB.calculateDarwinUI()` |
+| `/api/fossils` | GET | Consumido por `KB.loadFossils()` |
+| `/api/fossils/{id}` | GET | Consumido por `KB.searchFossilById()` |
+| `/api/fossils/layer/{layerId}` | GET | Consumido por `KB.searchFossilsByLayer()` |
 | `/api/fossils/estratigrafia` | GET | Consumido por `KB.getEstratigrafia()` |
-| `/api/layers` | GET | Disponível mas não usado no UI |
-| CRUD `/api/fossils` | POST/PUT/DELETE | Disponível mas sem UI |
-| CRUD `/api/layers` | POST/PUT/DELETE | Disponível mas sem UI |
+| `/api/fossils` | POST | Consumido por `KB.createFossil()` |
+| `/api/fossils/{id}` | PUT | Consumido por `KB.updateFossil()` |
+| `/api/fossils/{id}` | DELETE | Consumido por `KB.deleteFossil()` |
+| `/api/layers` | GET | Consumido por `KB.loadLayers()` |
+| `/api/layers/{id}` | GET | Consumido por `KB.searchLayerById()` |
+| `/api/layers` | POST | Consumido por `KB.createLayer()` |
+| `/api/layers/{id}` | PUT | Consumido por `KB.updateLayer()` |
+| `/api/layers/{id}` | DELETE | Consumido por `KB.deleteLayer()` |
 
 ### Tabelas
 
@@ -738,7 +748,7 @@ window.KB_API_BASE = "http://localhost:8080";
 
 1. **Naming inconsistency**: Tabela SQL usa `isotopes` (plural) enquanto `camada` e `fossil` são singulares
 2. **Campo `usedFor`**: Atributo em inglês na entidade `Isotope`, enquanto outras entidades usam português (`nomeEra`, `tipoRocha`)
-3. **IDs dos fósseis no fallback**: `FALLBACK_ESTRATIGRAFIA` usa `fossilId: 0` para Mammuthus, mas o auto-increment do banco começa em 1
+3. ~~**IDs dos fósseis no fallback**: `FALLBACK_ESTRATIGRAFIA` usa `fossilId: 0` para Mammuthus~~ **Corrigido na Sprint 3** (→ `fossilId: 1`)
 4. **Fetch lazy loading**: `Fossil.camada` usa `FetchType.LAZY`, mas a query JPQL do `findAllEstratigrafiaOrderByProfundidadeDesc` já faz JOIN, então não há problema de N+1 neste caso
 
 ### Pontos que Precisam ser Testados
